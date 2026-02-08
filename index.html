@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>싱글타워 앱</title>
+    <style>
+        /* 기본 스타일 및 레이아웃 */
+        :root {
+            --bg-ivory: #F9F7F2;
+            --header-dark: #333333;
+            --accent-blue: #007AFF;
+            --admin-red: #D32F2F;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --push-effect: translateY(2px) scale(0.98);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Pretendard', sans-serif;
+            background-color: var(--bg-ivory);
+            display: flex;
+            justify-content: center;
+        }
+
+        /* 9:16 모바일 컨테이너 */
+        #app-container {
+            width: 100vw;
+            max-width: 450px; /* 모바일 기준 너비 */
+            height: 100vh;
+            background-color: var(--bg-ivory);
+            position: relative;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        }
+
+        /* 관리자 상단 바 (관리자 모드일 때만 표시) */
+        #admin-top-bar {
+            display: none;
+            background: #000;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            font-size: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        /* 홈 메인 그리드 */
+        .main-content {
+            padding: 15px;
+            padding-bottom: 100px; /* 헤더 공간 */
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        /* 블럭 스타일 및 입체 효과 */
+        .block {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.1s;
+            cursor: pointer;
+            position: relative;
+        }
+        .block:active { transform: var(--push-effect); }
+        .block img { width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block; }
+        .block .label { padding: 5px; font-size: 11px; text-align: center; color: #333; }
+
+        /* 하단 네비게이션 헤더 */
+        #main-footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 450px;
+            background-color: var(--header-dark);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 900;
+        }
+        .nav-item {
+            color: white;
+            text-align: center;
+            font-size: 10px;
+            text-decoration: none;
+            transition: transform 0.1s;
+            cursor: pointer;
+        }
+        .nav-item:active { transform: var(--push-effect); }
+        .nav-item i { display: block; font-size: 20px; margin-bottom: 3px; }
+
+        /* 로그인 스킨 */
+        #login-screen {
+            position: absolute;
+            inset: 0;
+            background: white;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 40px;
+        }
+        .login-box { text-align: center; }
+        .login-box h1 { color: var(--header-dark); margin-bottom: 30px; letter-spacing: -1px; }
+        .login-box input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--header-dark);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .login-btn:active { transform: var(--push-effect); }
+        .sub-links { margin-top: 15px; font-size: 13px; color: #666; }
+
+        /* 관리자 전용 버튼 스타일 */
+        .admin-ctrl {
+            display: none;
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: rgba(211, 47, 47, 0.8);
+            color: white;
+            border: none;
+            padding: 2px 5px;
+            font-size: 10px;
+            border-radius: 4px;
+            z-index: 10;
+        }
+        .add-block-btn {
+            grid-column: span 3;
+            padding: 15px;
+            border: 2px dashed #ccc;
+            background: none;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            display: none;
+        }
+
+        /* 모달 (추가/수정용) */
+        #modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            width: 80%;
+            max-width: 300px;
+        }
+        .modal-content input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+
+<div id="app-container">
+    <div id="admin-top-bar">
+        ADMIN MODE | <button onclick="toggleMode()">일반모드로 전환</button>
+    </div>
+
+    <div id="login-screen">
+        <div class="login-box">
+            <h1>SINGLE TOWER</h1>
+            <input type="text" id="uid" placeholder="아이디">
+            <input type="password" id="upw" placeholder="패스워드">
+            <button class="login-btn" onclick="login()">로그인</button>
+            <div class="sub-links">
+                <span>회원가입</span> | <span onclick="adminAccess()" style="cursor:pointer">관리자 접속</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content" id="main-grid">
+        <button class="add-block-btn" id="add-btn" onclick="openModal('block')">+ 블럭 추가</button>
+        </div>
+
+    <div id="main-footer">
+        <div class="nav-item" onclick="alert('싱글백서')"><i>📘</i>싱글백서<button class="admin-ctrl" onclick="editHeader(0, event)">수정</button></div>
+        <div class="nav-item" onclick="alert('마이글')"><i>✍️</i>마이글<button class="admin-ctrl" onclick="editHeader(1, event)">수정</button></div>
+        <div class="nav-item" onclick="alert('채팅목록')"><i>💬</i>채팅목록<button class="admin-ctrl" onclick="editHeader(2, event)">수정</button></div>
+        <div class="nav-item" onclick="alert('설정')"><i>⚙️</i>설정<button class="admin-ctrl" onclick="editHeader(3, event)">수정</button></div>
+        <button class="admin-ctrl" style="position:relative; right:0; top:0;" onclick="alert('헤더추가기능')">+</button>
+    </div>
+</div>
+
+<div id="modal">
+    <div class="modal-content">
+        <h3 id="modal-title">항목 추가</h3>
+        <input type="text" id="item-name" placeholder="블럭명/항목명">
+        <input type="file" id="item-img" accept="image/*">
+        <input type="text" id="item-url" placeholder="연동 URL (외부/내부)">
+        <button class="login-btn" onclick="saveItem()">저장</button>
+        <button class="login-btn" style="background:#ccc; margin-top:5px;" onclick="closeModal()">취소</button>
+    </div>
+</div>
+
+<script>
+    let isAdmin = false;
+    let blocks = Array.from({length: 27}, (_, i) => ({
+        name: `블럭 ${i+1}`,
+        img: 'https://via.placeholder.com/512/ffffff/333333?text=SingleTower'
+    }));
+
+    // 초기 렌더링
+    function renderBlocks() {
+        const grid = document.getElementById('main-grid');
+        // 버튼 제외 초기화
+        const addBtn = document.getElementById('add-btn');
+        grid.innerHTML = '';
+        grid.appendChild(addBtn);
+
+        blocks.forEach((b, index) => {
+            const div = document.createElement('div');
+            div.className = 'block';
+            div.innerHTML = `
+                <img src="${b.img}" alt="img">
+                <div class="label">${b.name}</div>
+                <button class="admin-ctrl" onclick="deleteBlock(${index}, event)">삭제</button>
+            `;
+            div.onclick = () => alert(b.name + ' 페이지로 이동');
+            grid.appendChild(div);
+        });
+        updateAdminUI();
+    }
+
+    // 로그인 로직
+    function login() {
+        const id = document.getElementById('uid').value;
+        const pw = document.getElementById('upw').value;
+        
+        if(id === 'developer' && pw === '0007') {
+            isAdmin = true;
+            document.getElementById('login-screen').style.display = 'none';
+            alert('관리자 모드로 접속합니다.');
+            renderBlocks();
+        } else if(id && pw) {
+            isAdmin = false;
+            document.getElementById('login-screen').style.display = 'none';
+            renderBlocks();
+        } else {
+            alert('정보를 입력하세요.');
+        }
+    }
+
+    function adminAccess() {
+        document.getElementById('uid').value = 'developer';
+        document.getElementById('upw').value = '0007';
+    }
+
+    // 모드 전환
+    function toggleMode() {
+        isAdmin = !isAdmin;
+        updateAdminUI();
+    }
+
+    function updateAdminUI() {
+        const adminBar = document.getElementById('admin-top-bar');
+        const adminCtrls = document.querySelectorAll('.admin-ctrl');
+        const addBtn = document.getElementById('add-btn');
+
+        if(isAdmin) {
+            adminBar.style.display = 'block';
+            addBtn.style.display = 'block';
+            adminCtrls.forEach(c => c.style.display = 'block');
+        } else {
+            adminBar.style.display = 'none';
+            addBtn.style.display = 'none';
+            adminCtrls.forEach(c => c.style.display = 'none');
+        }
+    }
+
+    // 관리자 기능: 블럭 추가/삭제
+    let currentEditType = '';
+    function openModal(type) {
+        currentEditType = type;
+        document.getElementById('modal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('modal').style.display = 'none';
+    }
+
+    function saveItem() {
+        const name = document.getElementById('item-name').value;
+        const imgInput = document.getElementById('item-img');
+        
+        if(!name) return alert('이름을 입력하세요');
+
+        // 이미지 처리 시뮬레이션
+        let imgUrl = 'https://via.placeholder.com/512/eee/333?text=New+Image';
+        
+        if(currentEditType === 'block') {
+            blocks.unshift({ name: name, img: imgUrl });
+            renderBlocks();
+        }
+        closeModal();
+    }
+
+    function deleteBlock(index, event) {
+        event.stopPropagation();
+        if(confirm('이 블럭을 삭제할까요?')) {
+            blocks.splice(index, 1);
+            renderBlocks();
+        }
+    }
+
+    function editHeader(id, event) {
+        event.stopPropagation();
+        alert('헤더 수정 모드 진입 (항목 ID: ' + id + ')');
+    }
+
+    // 초기화
+    renderBlocks();
+</script>
+
+</body>
+</html>
