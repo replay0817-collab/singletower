@@ -6,96 +6,105 @@
     <title>싱글타워 앱</title>
     <style>
         :root {
-            --bg-white: #ffffff;
             --dark-gray: #333333;
-            --light-gray: #f8f8f8;
-            --accent-blue: #007AFF;
             --admin-red: #ff4757;
+            --grass-base: #567d46;
         }
 
-        /* 9:16 모바일 최적화 레이아웃 */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: #f0f0f0; display: flex; justify-content: center; align-items: center;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #000; display: flex; justify-content: center; align-items: center;
+            font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+            overflow: hidden;
         }
 
+        /* 9:16 모바일 최적화 컨테이너 */
         .app-container {
-            width: 100vw; height: 100vh; max-width: 414px; max-height: 736px; /* 9:16 비율 */
-            background-color: var(--bg-white); position: relative;
-            display: flex; flex-direction: column; overflow: hidden;
-            box-shadow: 0 0 30px rgba(0,0,0,0.1);
+            width: 100vw; height: 100vh; max-width: 414px; max-height: 736px;
+            position: relative; overflow: hidden; display: flex; flex-direction: column;
+            /* 잔디색상 실제처럼 색상변화 효과 */
+            animation: grassGradient 10s infinite alternate ease-in-out;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
 
-        /* 입체적 터치 액션 */
-        .interactive:active {
-            transform: scale(0.96) translateY(2px);
-            filter: brightness(0.9);
-            transition: 0.1s;
+        @keyframes grassGradient {
+            0% { background-color: #567d46; }
+            50% { background-color: #4a6d3a; }
+            100% { background-color: #638d52; }
         }
+
+        /* 입체적 터치 액션 (Action Type) */
+        .interactive { transition: transform 0.1s, filter 0.1s; cursor: pointer; }
+        .interactive:active { transform: scale(0.95) translateY(2px); filter: brightness(0.9); }
 
         /* 로그인 화면 */
         #login-screen {
             position: absolute; inset: 0; z-index: 1000;
-            background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%);
-            display: flex; flex-direction: column; justify-content: center; padding: 40px;
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px;
         }
         .login-box {
-            background: white; padding: 30px; border-radius: 24px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.06); text-align: center;
+            background: rgba(255,255,255,0.95); width: 100%; padding: 35px 25px; border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15); text-align: center;
         }
-        .login-box h1 { font-weight: 800; color: var(--dark-gray); margin-bottom: 30px; letter-spacing: -1px; }
-        .login-input {
-            width: 100%; padding: 15px; margin-bottom: 12px; border: 1px solid #ddd;
-            border-radius: 12px; box-sizing: border-box; outline: none;
+        .login-box h1 { margin-bottom: 35px; color: var(--dark-gray); font-size: 28px; font-weight: 800; letter-spacing: -1px; }
+        .login-box input {
+            width: 100%; padding: 16px; margin-bottom: 12px; border: 1px solid #eee;
+            border-radius: 14px; font-size: 16px; outline: none; background: #f9f9f9;
         }
-        .login-btn {
-            width: 100%; padding: 15px; background: var(--dark-gray); color: white;
-            border: none; border-radius: 12px; font-weight: 600; cursor: pointer;
-            box-shadow: 0 4px 0 #000;
+        .login-box button {
+            width: 100%; padding: 16px; background: var(--dark-gray); color: white;
+            border: none; border-radius: 14px; font-size: 16px; font-weight: bold; margin-top: 10px;
         }
-        .login-links { display: flex; justify-content: center; gap: 15px; margin-top: 20px; font-size: 13px; color: #888; }
 
-        /* 메인 콘텐츠 영역 */
-        #main-content { flex: 1; overflow-y: auto; padding-bottom: 100px; position: relative; }
+        /* 메인 콘텐츠 */
+        #main-content { flex: 1; overflow-y: auto; padding-bottom: 100px; }
         
-        /* 블럭형 행 구성 */
-        .block-row { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; }
-        .admin-view .block-row { border-bottom: 1px dashed var(--admin-red); }
+        /* 3열 고정 그리드 시스템 (3행 유지) */
+        .grid-container { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            width: 100%;
+        }
+
         .block-item {
-            aspect-ratio: 1/1.3; display: flex; flex-direction: column; 
-            align-items: center; justify-content: center; padding: 10px; box-sizing: border-box;
+            aspect-ratio: 1/1.3; display: flex; flex-direction: column; align-items: center;
+            justify-content: center; position: relative; padding: 5px;
         }
-        .admin-view .block-item { border: 0.5px dashed #ccc; }
-        
+
+        /* 일반모드 빈 블록 가이드 라인 숨기기 / 관리자모드 노출 */
+        .admin-view .block-item { border: 0.5px dashed rgba(255,255,255,0.4); }
+
         .block-img-box {
-            width: 100%; aspect-ratio: 1/1; background: #eee; border-radius: 8px;
-            overflow: hidden; display: flex; align-items: center; justify-content: center;
+            width: 100%; height: 82%; display: flex; align-items: center; justify-content: center;
         }
-        .block-img-box img { width: 100%; height: 100%; object-fit: cover; }
-        .block-text { margin-top: 8px; font-size: 12px; color: #444; font-weight: 500; }
+        .block-img-box img { width: 100%; height: 100%; object-fit: contain; }
 
-        /* 하단 고정 헤더 */
-        .fixed-header {
-            position: absolute; bottom: 0; width: 100%; height: 75px;
+        /* 블록별 문구 스타일 */
+        .block-text {
+            color: white; font-size: 11px; font-weight: bold; text-align: center;
+            margin-top: 2px; text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+            min-height: 1.2em;
+        }
+
+        /* 하단 고정 헤더 (네비게이션) */
+        .fixed-footer {
+            position: absolute; bottom: 0; width: 100%; height: 85px;
             background-color: var(--dark-gray); display: flex; justify-content: space-around;
-            align-items: center; z-index: 900; padding-bottom: env(safe-area-inset-bottom);
+            align-items: center; z-index: 900; padding-bottom: 15px;
         }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: #999; cursor: pointer; }
-        .nav-item.active { color: #fff; }
-        .nav-icon { font-size: 22px; margin-bottom: 4px; }
-        .nav-label { font-size: 10px; }
+        .nav-item { color: #888; text-align: center; flex: 1; display: flex; flex-direction: column; align-items: center; font-size: 10px; }
+        .nav-item.active { color: white; }
+        .nav-icon { font-size: 22px; margin-bottom: 5px; }
 
-        /* 관리자 컨트롤 패널 */
-        #admin-panel {
-            background: var(--admin-red); color: white; padding: 8px;
-            font-size: 11px; display: flex; justify-content: space-between; align-items: center;
-            position: sticky; top: 0; z-index: 1100;
+        /* 관리자 상단 제어 바 */
+        #admin-bar {
+            background: var(--admin-red); color: white; padding: 10px 15px;
+            display: flex; justify-content: space-between; align-items: center; font-size: 12px; z-index: 1100;
         }
-        .admin-ctrl-btn {
-            background: rgba(255,255,255,0.2); border: 1px solid #fff; color: #fff;
-            padding: 4px 8px; border-radius: 4px; font-size: 10px; cursor: pointer;
-        }
+        .admin-btn { background: rgba(0,0,0,0.2); border: 1px solid white; color: white; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 10px; }
 
         .hidden { display: none !important; }
     </style>
@@ -103,45 +112,41 @@
 <body>
 
 <div class="app-container">
-    <div id="admin-panel" class="hidden">
-        <span>ADMIN MODE</span>
+    <div id="admin-bar" class="hidden">
+        <span><strong>관리자 모드</strong></span>
         <div>
-            <button class="admin-ctrl-btn" onclick="togglePreview()">일반/관리자 전환</button>
-            <button class="admin-ctrl-btn" onclick="addNewRow()">행 추가</button>
-            <button class="admin-ctrl-btn" onclick="manageHeader()">헤더 편집</button>
+            <button class="admin-btn" onclick="togglePreview()">미리보기 전환</button>
+            <button class="admin-btn" onclick="editHeader()">헤더 편집</button>
         </div>
     </div>
 
     <div id="login-screen">
         <div class="login-box">
             <h1>SINGLE TOWER</h1>
-            <input type="text" id="id-input" class="login-input" placeholder="아이디">
-            <input type="password" id="pw-input" class="login-input" placeholder="패스워드">
-            <button class="login-btn interactive" onclick="handleLogin()">로그인</button>
-            <div class="login-links">
-                <span class="interactive">회원가입</span>
-                <span class="interactive" onclick="alert('developer 계정으로 로그인하세요.')">관리자 접속</span>
-            </div>
+            <input type="text" id="admin-id" placeholder="아이디">
+            <input type="password" id="admin-pw" placeholder="패스워드">
+            <button class="interactive" onclick="processLogin()">로그인</button>
+            <div style="margin-top:20px; font-size:13px; color:#888;">회원가입 | 아이디/비밀번호 찾기</div>
         </div>
     </div>
 
     <main id="main-content">
-        <div id="content-grid">
+        <div id="grid-wrap" class="grid-container">
             </div>
     </main>
 
-    <footer class="fixed-header" id="app-footer">
-        <div class="nav-item active interactive" onclick="navClick(this)">
-            <span class="nav-icon">📘</span><span class="nav-label">싱글백서</span>
+    <footer class="fixed-footer" id="main-nav">
+        <div class="nav-item active interactive" onclick="navAction(this)">
+            <span class="nav-icon">📖</span><span>싱글백서</span>
         </div>
-        <div class="nav-item interactive" onclick="navClick(this)">
-            <span class="nav-icon">📝</span><span class="nav-label">마이글</span>
+        <div class="nav-item interactive" onclick="navAction(this)">
+            <span class="nav-icon">👤</span><span>마이글</span>
         </div>
-        <div class="nav-item interactive" onclick="navClick(this)">
-            <span class="nav-icon">💬</span><span class="nav-label">채팅목록</span>
+        <div class="nav-item interactive" onclick="navAction(this)">
+            <span class="nav-icon">💬</span><span>채팅목록</span>
         </div>
-        <div class="nav-item interactive" onclick="navClick(this)">
-            <span class="nav-icon">⚙️</span><span class="nav-label">설정</span>
+        <div class="nav-item interactive" onclick="navAction(this)">
+            <span class="nav-icon">⚙️</span><span>설정</span>
         </div>
     </footer>
 </div>
@@ -149,107 +154,97 @@
 <script>
     const ADM_ID = "developer";
     const ADM_PW = "e1252126!!";
-    let isAdmin = false;
-    let isPreview = false;
-    let rowCount = 3; // 기본 3행 (9블럭)
+    let isManager = false;
+    let isPreviewMode = false;
 
-    function handleLogin() {
-        const id = document.getElementById('id-input').value;
-        const pw = document.getElementById('pw-input').value;
+    // 초기 블록 문구 데이터 설정
+    const blockLabels = {
+        1: "남성타워",
+        2: "여성타워",
+        3: "모델하우스",
+        6: "밴드타워",
+        9: "자동차타워"
+    };
 
-        if(id === ADM_ID && pw === ADM_PW) {
-            isAdmin = true;
-            document.getElementById('admin-panel').classList.remove('hidden');
+    function processLogin() {
+        const id = document.getElementById('admin-id').value;
+        const pw = document.getElementById('admin-pw').value;
+        if (id === ADM_ID && pw === ADM_PW) {
+            isManager = true;
+            document.getElementById('admin-bar').classList.remove('hidden');
         }
         document.getElementById('login-screen').classList.add('hidden');
-        renderApp();
+        buildGrid();
     }
 
-    function renderApp() {
-        const grid = document.getElementById('content-grid');
-        grid.innerHTML = '';
+    function buildGrid() {
+        const wrap = document.getElementById('grid-wrap');
+        wrap.innerHTML = '';
         
-        if(isAdmin && !isPreview) grid.classList.add('admin-view');
-        else grid.classList.remove('admin-view');
+        // 가이드 라인 표시 제어
+        if(isManager && !isPreviewMode) wrap.classList.add('admin-view');
+        else wrap.classList.remove('admin-view');
 
-        for(let r=0; r<rowCount; r++) {
-            const rowEl = document.createElement('div');
-            rowEl.className = 'block-row';
+        // 3열 x 4행(총 12개 블록) 고정 렌더링
+        for (let i = 1; i <= 12; i++) {
+            const block = document.createElement('div');
+            block.className = 'block-item interactive';
             
-            for(let c=1; c<=3; c++) {
-                const blockId = r * 3 + c;
-                // [PNG 첨부 체크] images 폴더 내 blockN.png 파일을 우선 참조
-                const imgSrc = `images/block${blockId}.png`;
-                
-                rowEl.innerHTML += `
-                    <div class="block-item interactive">
-                        <div class="block-img-box">
-                            <img src="${imgSrc}" onerror="this.src='https://via.placeholder.com/512x512?text=PNG+Ready'" alt="item">
-                        </div>
-                        <div class="block-text" id="text-${blockId}">항목 ${blockId}</div>
-                        ${isAdmin && !isPreview ? `
-                            <div style="margin-top:4px;">
-                                <button class="admin-ctrl-btn" style="background:#666;" onclick="alert('images/block${blockId}.png 로 업로드하세요')">IMG</button>
-                                <button class="admin-ctrl-btn" style="background:#666;" onclick="changeText(${blockId})">TXT</button>
-                                <button class="admin-ctrl-btn" style="background:#666;" onclick="deleteRow(this)">DEL</button>
-                            </div>
-                        ` : ''}
-                    </div>
-                `;
+            // 관리자 모드에서 클릭 시 텍스트 수정 기능
+            if(isManager && !isPreviewMode) {
+                block.onclick = () => {
+                    const currentTxt = blockLabels[i] || "";
+                    const newTxt = prompt(`block${i} 문구를 수정하세요:`, currentTxt);
+                    if(newTxt !== null) {
+                        blockLabels[i] = newTxt;
+                        buildGrid();
+                    }
+                };
             }
-            grid.appendChild(rowEl);
+
+            const labelTxt = blockLabels[i] || "";
+            // 일반모드에서는 '없음'으로 설정된 문구는 가림 처리
+            const displayTxt = (labelTxt === "없음" || labelTxt === "") ? "" : labelTxt;
+
+            block.innerHTML = `
+                <div class="block-img-box">
+                    <img src="images/block${i}.png" onerror="this.style.opacity='0'">
+                </div>
+                <div class="block-text">${displayTxt}</div>
+            `;
+            wrap.appendChild(block);
         }
     }
 
-    // 관리자 모드 기능들
     function togglePreview() {
-        isPreview = !isPreview;
-        renderApp();
+        isPreviewMode = !isPreviewMode;
+        buildGrid();
+        alert(isPreviewMode ? "일반 모드 미리보기가 활성화되었습니다." : "관리자 편집 모드로 전환되었습니다.");
     }
 
-    function addNewRow() {
-        rowCount++;
-        renderApp();
-    }
-
-    function deleteRow(btn) {
-        if(confirm("이 행을 삭제하시겠습니까?")) {
-            rowCount--;
-            renderApp();
-        }
-    }
-
-    function changeText(id) {
-        const newTxt = prompt("표시할 텍스트를 입력하세요:");
-        if(newTxt) document.getElementById(`text-${id}`).innerText = newTxt;
-    }
-
-    // 헤더(푸터) 관리 기능
-    function manageHeader() {
-        const action = prompt("[1]추가 [2]삭제 중 번호를 선택하세요.");
-        if(action === "1") {
-            const name = prompt("목록 명:");
-            const url = prompt("연결할 URL (내부페이지라면 #입력):");
+    function editHeader() {
+        const action = prompt("[1]목록 추가 [2]목록 삭제");
+        const nav = document.getElementById('main-nav');
+        if (action === "1") {
+            const name = prompt("이름:");
+            const icon = prompt("아이콘(이모지):", "✨");
+            const link = prompt("경로(내부# 또는 외부URL):");
             if(name) {
-                const footer = document.getElementById('app-footer');
-                const newItem = document.createElement('div');
-                newItem.className = 'nav-item interactive';
-                newItem.innerHTML = `<span class="nav-icon">✨</span><span class="nav-label">${name}</span>`;
-                newItem.onclick = () => { if(url !== '#') location.href = url; };
-                footer.appendChild(newItem);
+                const item = document.createElement('div');
+                item.className = 'nav-item interactive';
+                item.innerHTML = `<span class="nav-icon">${icon}</span><span>${name}</span>`;
+                item.onclick = () => { if(link) location.href = link; };
+                nav.appendChild(item);
             }
-        } else if(action === "2") {
-            alert("마지막에 추가된 항목부터 삭제됩니다.");
-            const footer = document.getElementById('app-footer');
-            if(footer.children.length > 4) footer.removeChild(footer.lastChild);
+        } else if (action === "2") {
+            if (nav.children.length > 4) nav.removeChild(nav.lastChild);
         }
     }
 
-    function navClick(el) {
-        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    function navAction(el) {
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         el.classList.add('active');
     }
 </script>
-
 </body>
 </html>
