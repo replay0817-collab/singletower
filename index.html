@@ -6,12 +6,12 @@
     <title>싱글타워 앱</title>
     <style>
         :root {
-            /* 잔디 색상: 녹색 + 진연두색 */
-            --grass-light: #7cfc00; 
-            --grass-dark: #228b22;
+            /* 녹색 + 진연두색 잔디 테마 */
+            --grass-deep: #228B22;
+            --grass-light: #7CFC00;
             --header-bg: #333333;
-            --white: #ffffff;
-            --active-scale: scale(0.95);
+            --white: #FFFFFF;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * {
@@ -23,104 +23,107 @@
         body, html {
             width: 100%;
             height: 100%;
-            overflow: hidden;
+            background-color: #000; /* 외부 여백 색상 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
             font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
-            background-color: #000; /* 외부 여백 처리 */
+            overflow: hidden;
         }
 
-        /* 9:16 모바일 최적화 컨테이너 */
-        #app-viewport {
+        /* 9:16 비율 컨테이너 */
+        #app-container {
             width: 100vw;
             height: 100vh;
-            max-width: 56.25vh; /* 9:16 비율 강제 */
-            margin: 0 auto;
+            max-width: calc(100vh * 9 / 16);
+            background: linear-gradient(135deg, var(--grass-deep), var(--grass-light));
             position: relative;
             display: flex;
             flex-direction: column;
-            /* 실제 잔디처럼 색상 변화 효과 (그라데이션) */
-            background: linear-gradient(135deg, var(--grass-light) 0%, var(--grass-dark) 100%);
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            overflow: hidden;
         }
 
         /* 관리자 전환 버튼 */
-        .mode-switcher {
+        .admin-toggle {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 15px;
+            right: 15px;
             z-index: 1000;
             padding: 8px 12px;
             background: rgba(255,255,255,0.8);
             border: none;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        /* 홈 메인 영역 (3열 배치 고정) */
-        .main-content {
+        /* 홈 메인 영역 (3열 고정) */
+        .home-main {
             flex: 1;
             overflow-y: auto;
-            padding: 15px;
-            padding-bottom: 90px; /* 하단바 높이만큼 여백 */
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 3개씩 배치 */
-            gap: 15px;
-            align-content: start;
+            grid-template-columns: repeat(3, 1fr); /* 3행 배치 고정 */
+            grid-auto-rows: min-content;
+            gap: 10px;
+            padding: 20px 10px 100px 10px; /* 하단 바 여백 */
+            scrollbar-width: none;
         }
+        .home-main::-webkit-scrollbar { display: none; }
 
         /* 블록 스타일 */
-        .tower-block {
+        .block-unit {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
-            transition: transform 0.1s ease;
+            width: 100%;
             cursor: pointer;
+            transition: var(--transition);
         }
 
-        .tower-block:active {
-            transform: var(--active-scale);
+        .block-unit:active {
+            transform: scale(0.92); /* 입체적 움직임 */
         }
 
-        .img-wrapper {
+        .img-box {
             width: 100%;
             aspect-ratio: 1 / 1;
             display: flex;
             align-items: center;
             justify-content: center;
+            background-color: transparent;
             position: relative;
-            background: transparent; /* 평소엔 투명 */
         }
 
-        /* 관리자 모드 시 블록 테두리 표시 */
-        .admin-active .img-wrapper {
+        /* 관리자 모드 시 테두리 표시 */
+        .admin-mode .img-box {
             border: 1px dashed rgba(255,255,255,0.5);
             background: rgba(255,255,255,0.1);
         }
 
-        .tower-block img {
-            width: 100%;
-            height: 100%;
+        .img-box img {
+            max-width: 100%;
+            max-height: 100%;
             object-fit: contain;
         }
 
-        .tower-label {
+        .block-text {
             margin-top: 5px;
+            color: var(--white);
             font-size: 11px;
-            color: #fff;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
             text-align: center;
-            min-height: 1.2em;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+            min-height: 14px;
         }
 
-        /* 하단 고정 네비게이션 (헤더) */
+        /* 하단 네비게이션 (헤더) */
         .bottom-nav {
             position: absolute;
             bottom: 0;
             width: 100%;
-            height: 75px;
+            height: 70px;
             background-color: var(--header-bg);
             display: flex;
             justify-content: space-around;
@@ -133,161 +136,159 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            color: #999;
+            color: var(--white);
             text-decoration: none;
-            transition: all 0.2s;
+            flex: 1;
+            transition: var(--transition);
         }
 
-        .nav-item.active { color: var(--white); }
+        .nav-item:active { transform: scale(0.9); }
 
-        .nav-item:active {
-            transform: var(--active-scale);
-        }
+        .nav-icon { font-size: 20px; margin-bottom: 3px; }
+        .nav-label { font-size: 10px; opacity: 0.9; }
 
-        .nav-icon {
-            font-size: 20px;
-            margin-bottom: 4px;
-        }
-
-        .nav-text {
-            font-size: 10px;
-        }
-
-        /* 관리자 수정 패널 */
-        #admin-panel {
+        /* 관리자 편집 팝업 */
+        #edit-modal {
             display: none;
             position: fixed;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
+            width: 80%;
             background: white;
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 12px;
             z-index: 2000;
-            width: 80%;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-
-        #admin-panel input {
-            width: 100%; margin-bottom: 10px; padding: 10px;
+        #edit-modal input {
+            width: 100%; padding: 10px; margin: 10px 0;
+            border: 1px solid #ddd; border-radius: 5px;
+        }
+        .modal-btns { display: flex; gap: 5px; }
+        .modal-btns button {
+            flex: 1; padding: 10px; border: none; border-radius: 5px; cursor: pointer;
         }
 
         .hidden { display: none !important; }
-
     </style>
 </head>
 <body>
 
-<div id="app-viewport">
-    <button class="mode-switcher" onclick="toggleMode()">관리자 모드 전환</button>
+<div id="app-container">
+    <button class="admin-toggle" onclick="toggleAdmin()">모드 전환</button>
 
-    <div class="main-content" id="mainGrid">
-        </div>
+    <main class="home-main" id="main-grid">
+        </main>
 
     <nav class="bottom-nav">
-        <a href="#" class="nav-item">
-            <div class="nav-icon">📜</div>
-            <div class="nav-text">싱글백서</div>
-        </a>
-        <a href="#" class="nav-item">
-            <div class="nav-icon">✏️</div>
-            <div class="nav-text">마이글</div>
-        </a>
-        <a href="#" class="nav-item">
-            <div class="nav-icon">💬</div>
-            <div class="nav-text">채팅목록</div>
-        </a>
-        <a href="#" class="nav-item">
-            <div class="nav-icon">⚙️</div>
-            <div class="nav-text">설정</div>
-        </a>
+        <div class="nav-item" onclick="navAction('guide')">
+            <span class="nav-icon">📘</span>
+            <span class="nav-label">싱글백서</span>
+        </div>
+        <div class="nav-item" onclick="navAction('posts')">
+            <span class="nav-icon">✍️</span>
+            <span class="nav-label">마이글</span>
+        </div>
+        <div class="nav-item" onclick="navAction('chat')">
+            <span class="nav-icon">💬</span>
+            <span class="nav-label">채팅목록</span>
+        </div>
+        <div class="nav-item" onclick="navAction('settings')">
+            <span class="nav-icon">⚙️</span>
+            <span class="nav-label">설정</span>
+        </div>
     </nav>
 </div>
 
-<div id="admin-panel">
-    <h4 id="panel-title">블록 편집</h4>
-    <input type="text" id="input-text" placeholder="문구 입력">
-    <input type="text" id="input-link" placeholder="연결 URL (https://...)">
-    <div style="display:flex; gap:5px;">
-        <button onclick="saveEdit()" style="flex:1; padding:10px;">저장</button>
-        <button onclick="closePanel()" style="flex:1; padding:10px;">취소</button>
+<div id="edit-modal">
+    <h3 style="font-size: 15px;">블록 정보 수정</h3>
+    <input type="text" id="edit-name" placeholder="문구 입력">
+    <input type="text" id="edit-link" placeholder="연결 URL (https://...)">
+    <div class="modal-btns">
+        <button onclick="saveEdit()" style="background: #333; color: white;">저장</button>
+        <button onclick="closeModal()" style="background: #eee;">취소</button>
     </div>
 </div>
 
 <script>
     let isAdmin = false;
-    let selectedIdx = null;
+    let targetIdx = null;
 
-    // 초기 데이터 구성 (총 36개 - 12행 x 3열)
+    // 초기 데이터 (12행 구성을 위해 36개 생성)
     const blocks = Array.from({ length: 36 }, (_, i) => ({
         id: i + 1,
-        text: "",
-        link: "",
+        name: "",
+        url: "",
         img: `images/block${i + 1}.png`
     }));
 
-    // 명시된 초기 문구 설정
-    blocks[0].text = "남성타워";
-    blocks[1].text = "여성타워";
-    blocks[2].text = "모델하우스";
-    blocks[2].link = "https://www.band.us/";
-    blocks[5].text = "자동차타워";
-    blocks[8].text = "밴드타워";
+    // 프롬프트 명시 문구 적용
+    blocks[0].name = "남성타워";
+    blocks[1].name = "여성타워";
+    blocks[2].name = "모델하우스";
+    blocks[5].name = "자동차타워";
+    blocks[8].name = "밴드타워";
+    blocks[8].url = "https://www.band.us/";
 
-    const mainGrid = document.getElementById('mainGrid');
+    const grid = document.getElementById('main-grid');
 
     function render() {
-        mainGrid.innerHTML = '';
-        const viewport = document.getElementById('app-viewport');
-        isAdmin ? viewport.classList.add('admin-active') : viewport.classList.remove('admin-active');
+        grid.innerHTML = '';
+        const container = document.getElementById('app-container');
+        isAdmin ? container.classList.add('admin-mode') : container.classList.remove('admin-mode');
 
-        blocks.forEach((block, idx) => {
-            const div = document.createElement('div');
-            div.className = 'tower-block';
-            
-            // 일반모드에서는 문구/가이드라인 숨김 로직
-            const showText = isAdmin || block.text !== "";
-            const textContent = showText ? block.text : "";
+        blocks.forEach((b, idx) => {
+            const unit = document.createElement('div');
+            unit.className = 'block-unit';
+            unit.onclick = () => handleBlockClick(idx);
 
-            div.innerHTML = `
-                <div class="img-wrapper" onclick="handleBlockClick(${idx})">
-                    <img src="${block.img}" onerror="this.style.opacity='0'" alt="">
+            // 일반모드에서는 텍스트가 있는 경우만 문구 표시
+            const showText = isAdmin || b.name !== "";
+            const textHTML = showText ? b.name : "";
+
+            unit.innerHTML = `
+                <div class="img-box">
+                    <img src="${b.img}" onerror="this.style.opacity='0'">
                 </div>
-                <div class="tower-label">${textContent}</div>
+                <div class="block-text">${textHTML}</div>
             `;
-            mainGrid.appendChild(div);
+            grid.appendChild(unit);
         });
     }
 
-    function handleBlockClick(idx) {
-        if (isAdmin) {
-            selectedIdx = idx;
-            document.getElementById('input-text').value = blocks[idx].text;
-            document.getElementById('input-link').value = blocks[idx].link;
-            document.getElementById('admin-panel').style.display = 'block';
-        } else {
-            if (blocks[idx].link) {
-                window.open(blocks[idx].link, '_blank');
-            }
-        }
-    }
-
-    function toggleMode() {
+    function toggleAdmin() {
         isAdmin = !isAdmin;
         render();
     }
 
+    function handleBlockClick(idx) {
+        if (isAdmin) {
+            targetIdx = idx;
+            document.getElementById('edit-name').value = blocks[idx].name;
+            document.getElementById('edit-link').value = blocks[idx].url;
+            document.getElementById('edit-modal').style.display = 'block';
+        } else {
+            if (blocks[idx].url) window.location.href = blocks[idx].url;
+        }
+    }
+
     function saveEdit() {
-        blocks[selectedIdx].text = document.getElementById('input-text').value;
-        blocks[selectedIdx].link = document.getElementById('input-link').value;
-        closePanel();
+        blocks[targetIdx].name = document.getElementById('edit-name').value;
+        blocks[targetIdx].url = document.getElementById('edit-link').value;
+        closeModal();
         render();
     }
 
-    function closePanel() {
-        document.getElementById('admin-panel').style.display = 'none';
+    function closeModal() {
+        document.getElementById('edit-modal').style.display = 'none';
     }
 
-    // 초기 실행
+    function navAction(type) {
+        console.log(type + " 클릭됨");
+        // 입체적 움직임은 CSS :active로 처리됨
+    }
+
+    // 초기 렌더링
     render();
 </script>
 
