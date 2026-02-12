@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>싱글타워 앱</title>
     <style>
-        /* [TECH RULES] 공통 스타일 및 9:16 최적화 */
         :root {
-            --bg-deep-grey: #2C2C2C; /* 진회색 */
+            --bg-dark: #2C2C2C; /* 진회색 */
             --ivory: #F5F5F0;
             --white: #FFFFFF;
             --gold: #D4AF37;
@@ -18,23 +17,23 @@
             margin: 0; padding: 0;
             -webkit-tap-highlight-color: transparent;
             user-select: none;
-            -webkit-touch-callout: none;
+            outline: none;
         }
 
         body, html {
             width: 100%; height: 100%;
             background-color: #000;
-            font-family: 'Apple SD Gothic Neo', sans-serif;
+            font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
             overflow: hidden;
         }
 
-        /* 모바일 9:16 프레임 */
-        #app-container {
+        /* 9:16 모바일 최적화 프레임 */
+        #app-frame {
             position: relative;
             width: 100vw; height: 177.77vw;
             max-height: 100vh; max-width: 56.25vh;
             margin: 0 auto;
-            background-color: var(--bg-deep-grey);
+            background-color: var(--bg-dark);
             display: flex; flex-direction: column;
             overflow: hidden;
         }
@@ -42,7 +41,7 @@
         /* [인트로] */
         #intro-layer {
             position: absolute; inset: 0; z-index: 9999;
-            background: var(--bg-deep-grey);
+            background: var(--bg-dark);
             display: flex; justify-content: center; align-items: center;
         }
         #intro-layer img {
@@ -51,183 +50,197 @@
         }
         @keyframes introFade {
             0% { opacity: 0; transform: scale(1.1); }
-            20% { opacity: 1; }
-            80% { opacity: 1; }
+            15% { opacity: 1; }
+            85% { opacity: 1; }
             100% { opacity: 0; visibility: hidden; }
         }
 
-        /* [상단 로고] Logo Entrance */
-        .top-area { padding: 25px 0 10px; text-align: center; position: relative; }
+        /* [헤더 & 로고] */
+        .header-area {
+            padding: 20px 0 10px;
+            text-align: center;
+            position: relative;
+            z-index: 100;
+        }
         #main-logo {
-            font-family: 'Georgia', serif; font-size: 30px; font-weight: bold;
-            color: var(--gold); opacity: 0; transform: scale(0.9);
+            font-family: 'Georgia', serif;
+            font-size: 28px; font-weight: bold;
+            color: var(--gold);
+            opacity: 0;
+            transform: scale(0.8);
             transition: all 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
         #main-logo.active { opacity: 1; transform: scale(1); }
-        
+
         .btn-home {
-            position: absolute; left: 15px; top: 25px; font-size: 22px;
-            cursor: pointer; display: none; z-index: 100;
+            position: absolute; left: 15px; top: 22px;
+            font-size: 20px; cursor: pointer; display: none;
+            z-index: 101; filter: drop-shadow(0 0 2px rgba(0,0,0,0.5));
         }
 
-        /* 콘텐츠 영역 및 페이지별 반짝임 */
+        /* [콘텐츠 스크롤 & 페이지별 반짝임] */
         #content-scroll {
-            flex: 1; overflow-y: auto; padding: 12px;
+            flex: 1; overflow-y: auto; padding: 10px;
             scrollbar-width: none;
         }
         #content-scroll::-webkit-scrollbar { display: none; }
 
         .page { display: none; width: 100%; }
-        .page.active { display: block; animation: shimmer 1s ease-in-out; }
-        @keyframes shimmer {
+        .page.active { display: block; animation: shimmerEffect 1s ease-in-out; }
+        @keyframes shimmerEffect {
             0% { filter: brightness(1); }
-            50% { filter: brightness(1.2); }
+            50% { filter: brightness(1.25); }
             100% { filter: brightness(1); }
         }
 
-        /* [홈 메인] 그리드 및 블럭 라인 숨김 */
-        .grid {
+        /* [홈 메인 그리드] */
+        .tower-grid {
             display: grid; grid-template-columns: repeat(3, 1fr);
             gap: 15px; border: none;
         }
-        .block {
+        .block-unit {
             display: flex; flex-direction: column; align-items: center;
             cursor: pointer; transition: transform 0.1s;
-            border: none; /* 블럭 라인 숨김 */
-            background-color: var(--bg-deep-grey);
+            border: none; background: none;
         }
-        .block:active { transform: scale(0.92); }
+        .block-unit:active { transform: scale(0.92) translateY(2px); }
         
-        .img-wrap {
+        .img-container {
             width: 100%; aspect-ratio: 1/1;
+            background-color: var(--bg-dark);
             display: flex; align-items: center; justify-content: center;
-            overflow: hidden; border: none; /* 가이드 라인 숨김 */
+            overflow: hidden; border: none; /* 블럭 라인 숨김 */
         }
-        .img-wrap img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+        .img-container img { 
+            width: 100%; height: 100%; object-fit: contain; 
+            border: none; outline: none;
+        }
         
-        .block-label {
-            margin-top: 5px; font-size: 11px; color: var(--white);
-            height: 14px; text-align: center; border: none;
+        .block-text {
+            margin-top: 6px; font-size: 11px; color: var(--white);
+            height: 1.2em; text-align: center; border: none;
         }
 
-        /* 입체적 버튼 스타일 */
+        /* 입체적 버튼 */
         .action-btn {
-            width: 100%; padding: 16px; background: var(--ivory);
-            border: none; border-radius: 12px; font-weight: bold;
-            margin-top: 15px; box-shadow: 0 4px 0 #ccc;
-            cursor: pointer;
+            width: 100%; padding: 15px;
+            background-color: var(--ivory);
+            border: none; border-radius: 12px;
+            font-weight: bold; margin-top: 12px;
+            box-shadow: 0 4px 0 #ccc;
+            cursor: pointer; transition: all 0.1s;
         }
         .action-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #ccc; }
-        .btn-gold { background: var(--gold); color: white; box-shadow: 0 4px 0 #b38f2d; }
+        .btn-gold { background-color: var(--gold); color: white; box-shadow: 0 4px 0 #b38f2d; }
 
         /* [하단 고정 헤더] */
-        .bottom-nav {
-            height: 65px; background: var(--ivory);
+        .bottom-navbar {
+            height: 60px; background-color: var(--ivory);
             display: flex; justify-content: space-around; align-items: center;
-            z-index: 1000; position: sticky; bottom: 0;
+            border-top: 1px solid rgba(0,0,0,0.05); z-index: 1000;
         }
-        .nav-item {
+        .nav-link {
             display: flex; flex-direction: column; align-items: center;
-            font-size: 10px; color: #333; cursor: pointer; flex: 1;
+            font-size: 9px; color: #333; cursor: pointer; flex: 1;
+            transition: transform 0.1s;
         }
-        .nav-item:active { transform: translateY(2px); }
-        .nav-icon { font-size: 20px; margin-bottom: 2px; }
+        .nav-link:active { transform: scale(0.9); }
+        .nav-link span:first-child { font-size: 18px; margin-bottom: 2px; }
 
         /* [문 열림 애니메이션] */
-        #door-wrap {
+        #door-overlay {
             position: absolute; inset: 0; z-index: 5000;
             display: none; pointer-events: none;
         }
-        .door {
+        .door-panel {
             position: absolute; top: 0; width: 50%; height: 100%;
             background: #111; transition: transform 0.8s ease-in-out;
         }
-        .door-l { left: 0; transform: translateX(-100%); }
-        .door-r { right: 0; transform: translateX(100%); }
-        #door-wrap.active .door-l { transform: translateX(0); }
-        #door-wrap.active .door-r { transform: translateX(0); }
+        .door-left { left: 0; transform: translateX(-100%); }
+        .door-right { right: 0; transform: translateX(100%); }
+        #door-overlay.active .door-left { transform: translateX(0); }
+        #door-overlay.active .door-right { transform: translateX(0); }
 
-        /* 관리자 패널 */
+        /* [관리자 패널] */
         #admin-panel {
             display: none; position: absolute; inset: 0;
-            background: rgba(255,255,255,0.98); z-index: 10001; padding: 20px;
+            background: rgba(255,255,255,0.98); z-index: 10001; padding: 25px;
             overflow-y: auto; color: #333;
         }
-        .admin-row { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .admin-row input { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ddd; }
+        .admin-item { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+        .admin-item input { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ddd; }
     </style>
 </head>
 <body oncontextmenu="return false">
 
-<div id="app-container">
-    <div id="intro-layer"><img src="images/인트로.png" alt="Intro"></div>
-    
-    <div id="door-wrap">
-        <div class="door door-l"></div>
-        <div class="door door-r"></div>
+<div id="app-frame">
+    <div id="intro-layer">
+        <img src="images/인트로.png" alt="Intro" onerror="this.parentElement.style.display='none'">
     </div>
 
-    <div class="top-area">
-        <div class="btn-home" id="btn-home" onclick="navTo(1)">🏠</div>
+    <div id="door-overlay">
+        <div class="door-panel door-left"></div>
+        <div class="door-panel door-right"></div>
+    </div>
+
+    <header class="header-area">
+        <div class="btn-home" id="btn-home" onclick="changePage(1)">🏠</div>
         <div id="main-logo">Single Tower</div>
-    </div>
+    </header>
 
-    <div id="content-scroll">
+    <main id="content-scroll">
         <div id="page1" class="page active">
-            <div class="grid" id="main-grid"></div>
+            <div class="tower-grid" id="main-grid"></div>
         </div>
 
         <div id="page2" class="page">
-            <div class="img-wrap" style="aspect-ratio: auto; height: auto;">
-                <img src="images/복도.png" style="width:100%; border-radius:10px;">
-            </div>
+            <div class="img-container" style="aspect-ratio: auto;"><img src="images/복도.png" style="width:100%"></div>
             <button class="action-btn btn-gold" onclick="doorMove(4)">My Zone</button>
         </div>
 
         <div id="page3" class="page">
-            <div class="img-wrap" style="aspect-ratio: auto; height: auto;">
-                <img src="images/복도.png" style="width:100%; border-radius:10px;">
-            </div>
+            <div class="img-container" style="aspect-ratio: auto;"><img src="images/복도.png" style="width:100%"></div>
             <button class="action-btn btn-gold" onclick="doorMove(5)">My Zone</button>
         </div>
 
         <div id="page4" class="page">
-            <img src="images/남성존.png" style="width:100%; border-radius: 10px;">
-            <div class="grid" style="margin-top:20px; grid-template-columns: 1fr 1fr;">
-                <button class="action-btn">프로필</button>
-                <button class="action-btn">사진첩</button>
-                <button class="action-btn" style="grid-column: span 2;">방명록</button>
-            </div>
-        </div>
-
-        <div id="page5" class="page">
-            <img src="images/여성존.png" style="width:100%; border-radius: 10px;">
-            <div class="grid" style="margin-top:20px; grid-template-columns: 1fr 1fr;">
+            <div class="img-container" style="aspect-ratio: auto;"><img src="images/남성존.png" style="width:100%"></div>
+            <div class="tower-grid" style="margin-top:15px; grid-template-columns: 1fr 1fr; gap:10px;">
                 <button class="action-btn">프로필</button>
                 <button class="action-btn">사진첩</button>
                 <button class="action-btn">방명록</button>
                 <button class="action-btn">다이어리</button>
             </div>
         </div>
-    </div>
 
-    <footer class="bottom-nav">
-        <div class="nav-item"><span class="nav-icon">📜</span><span>싱글백서</span></div>
-        <div class="nav-item"><span class="nav-icon">✒️</span><span>마이글</span></div>
-        <div class="nav-item"><span class="nav-icon">💬</span><span>채팅목록</span></div>
-        <div class="nav-item" onclick="openAdmin()"><span class="nav-icon">⚙️</span><span>설정</span></div>
+        <div id="page5" class="page">
+            <div class="img-container" style="aspect-ratio: auto;"><img src="images/여성존.png" style="width:100%"></div>
+            <div class="tower-grid" style="margin-top:15px; grid-template-columns: 1fr 1fr; gap:10px;">
+                <button class="action-btn">프로필</button>
+                <button class="action-btn">사진첩</button>
+                <button class="action-btn">방명록</button>
+                <button class="action-btn">다이어리</button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bottom-navbar">
+        <div class="nav-link"><span>📜</span><span>싱글백서</span></div>
+        <div class="nav-link"><span>✒️</span><span>마이글</span></div>
+        <div class="nav-link"><span>💬</span><span>채팅목록</span></div>
+        <div class="nav-link" onclick="toggleAdmin()"><span>⚙️</span><span>설정</span></div>
     </footer>
 
     <div id="admin-panel">
-        <h2 style="margin-bottom:20px;">관리자 설정</h2>
-        <div id="admin-fields"></div>
-        <button class="action-btn btn-gold" onclick="closeAdmin()">저장 및 닫기</button>
+        <h2 style="margin-bottom:20px; font-size:18px;">관리자 설정</h2>
+        <div id="admin-list"></div>
+        <button class="action-btn" onclick="toggleAdmin()" style="margin-top:20px; background:#333; color:#fff;">저장 및 닫기</button>
     </div>
 </div>
 
 <script>
-    // 1페이지 블럭 데이터 (12개)
-    const blocks = [
+    // 블록 데이터 (12개 행 자동 매칭 데이터)
+    const towerBlocks = [
         { id: 1, text: "남성타워", link: 2 },
         { id: 2, text: "여성타워", link: 3 },
         { id: 3, text: "모델하우스", link: null },
@@ -242,87 +255,93 @@
         { id: 12, text: "", link: null }
     ];
 
-    let isAdmin = false;
+    let isAdminMode = false;
 
-    // 인트로 종료 후 로고 표시 및 그리드 렌더링
-    window.onload = () => {
+    // 초기화 및 인트로 제어
+    window.addEventListener('load', () => {
         setTimeout(() => {
             document.getElementById('intro-layer').style.display = 'none';
             document.getElementById('main-logo').classList.add('active');
-            renderGrid();
+            initMainGrid();
         }, 3000);
-    };
+    });
 
-    // 그리드 렌더링 (이미지 자동 매칭 및 라인 숨김)
-    function renderGrid() {
+    // 1페이지 메인 그리드 렌더링 (이미지 자동 매칭 & 라인 숨김 로직)
+    function initMainGrid() {
         const grid = document.getElementById('main-grid');
         grid.innerHTML = '';
-        blocks.forEach((b, idx) => {
-            const el = document.createElement('div');
-            el.className = 'block';
+        towerBlocks.forEach((item, index) => {
+            const block = document.createElement('div');
+            block.className = 'block-unit';
             
-            // 일반 모드에서 문구가 없으면 라벨 영역 숨김 (이미지는 그대로 출력)
-            const labelContent = (isAdmin || b.text) ? b.text : '';
+            // 빈 블록 자리 유지를 위해 visibility 대신 투명도나 높이 조절이 아닌 그리드 배치 유지
+            // 일반모드에서는 문구가 없어도 이미지는 표시하되 가이드라인은 CSS에서 이미 제거됨
 
-            el.onclick = () => {
-                if(typeof b.link === 'number') navTo(b.link);
-                else if(b.link) window.location.href = b.link;
+            block.onclick = () => {
+                if(typeof item.link === 'number') changePage(item.link);
+                else if(item.link) window.location.href = item.link;
             };
 
-            // 행1=block1.png, 행2=block2.png 자동 매칭
-            el.innerHTML = `
-                <div class="img-wrap">
-                    <img src="images/block${b.id}.png" onerror="this.style.opacity='0'">
+            // block.png 파일 누락 없이 자동 매칭 (이미지 최대 크기 적용)
+            block.innerHTML = `
+                <div class="img-container">
+                    <img src="images/block${item.id}.png" oncontextmenu="return false;" onerror="this.style.opacity='0'">
                 </div>
-                <div class="block-label">${labelContent}</div>
+                <div class="block-text">${isAdminMode || item.text ? item.text : ''}</div>
             `;
-            grid.appendChild(el);
+            grid.appendChild(block);
         });
     }
 
-    // 페이지 이동
-    function navTo(pageNum) {
+    // 페이지 전환 및 반짝임 효과
+    function changePage(num) {
+        const scrollArea = document.getElementById('content-scroll');
+        scrollArea.classList.remove('shimmerEffect');
+        void scrollArea.offsetWidth; // Reflow 트리거
+        scrollArea.classList.add('shimmerEffect');
+
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById(`page${pageNum}`).classList.add('active');
-        document.getElementById('btn-home').style.display = (pageNum > 1) ? 'block' : 'none';
-        document.getElementById('content-scroll').scrollTop = 0;
+        document.getElementById(`page${num}`).classList.add('active');
+        
+        // 홈버튼 제어 (2페이지 이상부터 표시)
+        document.getElementById('btn-home').style.display = (num > 1) ? 'block' : 'none';
+        scrollArea.scrollTop = 0;
     }
 
-    // 문 열림 애니메이션 효과
-    function doorMove(target) {
-        const door = document.getElementById('door-wrap');
+    // 문 열림 애니메이션 이동
+    function doorMove(targetNum) {
+        const door = document.getElementById('door-overlay');
         door.style.display = 'block';
         setTimeout(() => door.classList.add('active'), 10);
+        
         setTimeout(() => {
-            navTo(target);
+            changePage(targetNum);
             door.classList.remove('active');
             setTimeout(() => door.style.display = 'none', 800);
-        }, 800);
+        }, 850);
     }
 
-    // 관리자 모드
-    function openAdmin() {
-        isAdmin = true;
-        const fields = document.getElementById('admin-fields');
-        fields.innerHTML = '';
-        blocks.forEach((b, i) => {
-            const row = document.createElement('div');
-            row.className = 'admin-row';
-            row.innerHTML = `
-                <label>Block ${b.id} 문구 (이미지: block${b.id}.png)</label>
-                <input type="text" value="${b.text}" oninput="blocks[${i}].text=this.value">
-            `;
-            fields.appendChild(row);
-        });
-        document.getElementById('admin-panel').style.display = 'block';
-        renderGrid();
-    }
-
-    function closeAdmin() {
-        isAdmin = false;
-        document.getElementById('admin-panel').style.display = 'none';
-        renderGrid();
+    // 관리자 모드 토글 및 로직
+    function toggleAdmin() {
+        isAdminMode = !isAdminMode;
+        const panel = document.getElementById('admin-panel');
+        if(isAdminMode) {
+            const list = document.getElementById('admin-list');
+            list.innerHTML = '';
+            towerBlocks.forEach((item, i) => {
+                const row = document.createElement('div');
+                row.className = 'admin-item';
+                row.innerHTML = `<label>Block ${item.id} 텍스트</label>
+                                 <input type="text" value="${item.text}" oninput="towerBlocks[${i}].text=this.value">`;
+                list.appendChild(row);
+            });
+            panel.style.display = 'block';
+        } else {
+            panel.style.display = 'none';
+            initMainGrid();
+        }
     }
 </script>
+
 </body>
 </html>
