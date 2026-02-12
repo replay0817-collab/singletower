@@ -5,260 +5,324 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>싱글타워 앱</title>
     <style>
-        /* [TECH RULES] 기반 설정 */
+        /* [TECH RULES] 공통 스타일 및 9:16 최적화 */
         :root {
             --bg-deep-grey: #2C2C2C; /* 진회색 */
-            --header-ivory: #F5F5F0; /* 아이보리 */
-            --point-gold: #D4AF37;
+            --ivory: #F5F5F0;
+            --white: #FFFFFF;
+            --gold: #D4AF37;
         }
 
         * {
             box-sizing: border-box;
+            margin: 0; padding: 0;
             -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-touch-callout: none;
         }
 
         body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #1a1a1a;
+            width: 100%; height: 100%;
+            background-color: #000;
             font-family: 'Apple SD Gothic Neo', sans-serif;
             overflow: hidden;
         }
 
-        /* 9:16 비율 최적화 컨테이너 */
-        .app-frame {
+        /* 모바일 9:16 프레임 */
+        #app-container {
             position: relative;
-            width: 100vw;
-            height: 177.77vw; 
-            max-height: 100vh;
-            max-width: 56.25vh;
+            width: 100vw; height: 177.77vw;
+            max-height: 100vh; max-width: 56.25vh;
             margin: 0 auto;
             background-color: var(--bg-deep-grey);
+            display: flex; flex-direction: column;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 0 50px rgba(0,0,0,0.8);
         }
 
-        /* 홈 메인 그리드 */
-        .main-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 10px;
-            padding-bottom: 90px;
+        /* [인트로] */
+        #intro-layer {
+            position: absolute; inset: 0; z-index: 9999;
+            background: var(--bg-deep-grey);
+            display: flex; justify-content: center; align-items: center;
+        }
+        #intro-layer img {
+            width: 100%; height: 100%; object-fit: cover;
+            animation: introFade 3s ease-in-out forwards;
+        }
+        @keyframes introFade {
+            0% { opacity: 0; transform: scale(1.1); }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; visibility: hidden; }
+        }
+
+        /* [상단 로고] Logo Entrance */
+        .top-area { padding: 25px 0 10px; text-align: center; position: relative; }
+        #main-logo {
+            font-family: 'Georgia', serif; font-size: 30px; font-weight: bold;
+            color: var(--gold); opacity: 0; transform: scale(0.9);
+            transition: all 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        #main-logo.active { opacity: 1; transform: scale(1); }
+        
+        .btn-home {
+            position: absolute; left: 15px; top: 25px; font-size: 22px;
+            cursor: pointer; display: none; z-index: 100;
+        }
+
+        /* 콘텐츠 영역 및 페이지별 반짝임 */
+        #content-scroll {
+            flex: 1; overflow-y: auto; padding: 12px;
             scrollbar-width: none;
         }
-        .main-container::-webkit-scrollbar { display: none; }
+        #content-scroll::-webkit-scrollbar { display: none; }
 
-        .block-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 3행(열) 유지 */
-            gap: 10px;
+        .page { display: none; width: 100%; }
+        .page.active { display: block; animation: shimmer 1s ease-in-out; }
+        @keyframes shimmer {
+            0% { filter: brightness(1); }
+            50% { filter: brightness(1.2); }
+            100% { filter: brightness(1); }
         }
 
-        /* 입체적 움직임 액션 */
-        .block-item {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
-            transition: transform 0.1s cubic-bezier(0.2, 0, 0.2, 1);
+        /* [홈 메인] 그리드 및 블럭 라인 숨김 */
+        .grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 15px; border: none;
         }
-        .block-item:active {
-            transform: scale(0.92) translateY(4px);
-        }
-
-        .img-wrapper {
-            width: 100%;
-            aspect-ratio: 1 / 1;
+        .block {
+            display: flex; flex-direction: column; align-items: center;
+            cursor: pointer; transition: transform 0.1s;
+            border: none; /* 블럭 라인 숨김 */
             background-color: var(--bg-deep-grey);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            /* 가이드 라인 숨기기: 기본적으로 테두리 없음 */
         }
-        .img-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            pointer-events: none;
+        .block:active { transform: scale(0.92); }
+        
+        .img-wrap {
+            width: 100%; aspect-ratio: 1/1;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; border: none; /* 가이드 라인 숨김 */
         }
-
+        .img-wrap img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+        
         .block-label {
-            margin-top: 6px;
-            font-size: 11px;
-            color: #ffffff;
-            font-weight: 500;
-            text-align: center;
-            min-height: 1.2em;
+            margin-top: 5px; font-size: 11px; color: var(--white);
+            height: 14px; text-align: center; border: none;
         }
 
-        /* 하단 고정 헤더 */
-        .bottom-header {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            height: 80px;
-            background-color: var(--header-ivory);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            border-top: 1px solid #ddd;
-            z-index: 1000;
+        /* 입체적 버튼 스타일 */
+        .action-btn {
+            width: 100%; padding: 16px; background: var(--ivory);
+            border: none; border-radius: 12px; font-weight: bold;
+            margin-top: 15px; box-shadow: 0 4px 0 #ccc;
+            cursor: pointer;
+        }
+        .action-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #ccc; }
+        .btn-gold { background: var(--gold); color: white; box-shadow: 0 4px 0 #b38f2d; }
+
+        /* [하단 고정 헤더] */
+        .bottom-nav {
+            height: 65px; background: var(--ivory);
+            display: flex; justify-content: space-around; align-items: center;
+            z-index: 1000; position: sticky; bottom: 0;
         }
         .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: #333;
-            font-size: 10px;
-            text-decoration: none;
-            transition: transform 0.1s;
+            display: flex; flex-direction: column; align-items: center;
+            font-size: 10px; color: #333; cursor: pointer; flex: 1;
         }
-        .nav-item:active { transform: translateY(2px) scale(0.95); }
-        .nav-icon { font-size: 24px; margin-bottom: 2px; }
+        .nav-item:active { transform: translateY(2px); }
+        .nav-icon { font-size: 20px; margin-bottom: 2px; }
+
+        /* [문 열림 애니메이션] */
+        #door-wrap {
+            position: absolute; inset: 0; z-index: 5000;
+            display: none; pointer-events: none;
+        }
+        .door {
+            position: absolute; top: 0; width: 50%; height: 100%;
+            background: #111; transition: transform 0.8s ease-in-out;
+        }
+        .door-l { left: 0; transform: translateX(-100%); }
+        .door-r { right: 0; transform: translateX(100%); }
+        #door-wrap.active .door-l { transform: translateX(0); }
+        #door-wrap.active .door-r { transform: translateX(0); }
 
         /* 관리자 패널 */
-        #adminPanel {
-            display: none;
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            background: rgba(255,255,255,0.98);
-            z-index: 2000;
-            padding: 15px;
-            border-bottom: 2px solid var(--point-gold);
-            max-height: 60%;
-            overflow-y: auto;
+        #admin-panel {
+            display: none; position: absolute; inset: 0;
+            background: rgba(255,255,255,0.98); z-index: 10001; padding: 20px;
+            overflow-y: auto; color: #333;
         }
-        .admin-btn {
-            background: #333; color: #fff; border: none; 
-            padding: 5px 10px; margin: 2px; border-radius: 4px; font-size: 11px;
-        }
+        .admin-row { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .admin-row input { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ddd; }
     </style>
 </head>
 <body oncontextmenu="return false">
 
-<div class="app-frame">
-    <div id="adminPanel">
-        <h3 style="font-size:14px; margin-top:0;">관리자 모드</h3>
-        <div id="blockEditors"></div>
-        <hr>
-        <button class="admin-btn" onclick="addNavItem()">헤더 목록 추가/관리</button>
-        <button class="admin-btn" style="width:100%; margin-top:10px; background:var(--point-gold);" onclick="toggleAdmin()">관리자 모드 종료</button>
+<div id="app-container">
+    <div id="intro-layer"><img src="images/인트로.png" alt="Intro"></div>
+    
+    <div id="door-wrap">
+        <div class="door door-l"></div>
+        <div class="door door-r"></div>
     </div>
 
-    <main class="main-container">
-        <div class="block-grid" id="mainGrid"></div>
-    </main>
+    <div class="top-area">
+        <div class="btn-home" id="btn-home" onclick="navTo(1)">🏠</div>
+        <div id="main-logo">Single Tower</div>
+    </div>
 
-    <footer class="bottom-header">
-        <div class="nav-item" onclick="handleNav('manual')">
-            <span class="nav-icon">📜</span>
-            <span>싱글백서</span>
+    <div id="content-scroll">
+        <div id="page1" class="page active">
+            <div class="grid" id="main-grid"></div>
         </div>
-        <div class="nav-item" onclick="handleNav('my')">
-            <span class="nav-icon">✒️</span>
-            <span>마이글</span>
+
+        <div id="page2" class="page">
+            <div class="img-wrap" style="aspect-ratio: auto; height: auto;">
+                <img src="images/복도.png" style="width:100%; border-radius:10px;">
+            </div>
+            <button class="action-btn btn-gold" onclick="doorMove(4)">My Zone</button>
         </div>
-        <div class="nav-item" onclick="handleNav('chat')">
-            <span class="nav-icon">💬</span>
-            <span>채팅목록</span>
+
+        <div id="page3" class="page">
+            <div class="img-wrap" style="aspect-ratio: auto; height: auto;">
+                <img src="images/복도.png" style="width:100%; border-radius:10px;">
+            </div>
+            <button class="action-btn btn-gold" onclick="doorMove(5)">My Zone</button>
         </div>
-        <div class="nav-item" onclick="toggleAdmin()">
-            <span class="nav-icon">⚙️</span>
-            <span>설정</span>
+
+        <div id="page4" class="page">
+            <img src="images/남성존.png" style="width:100%; border-radius: 10px;">
+            <div class="grid" style="margin-top:20px; grid-template-columns: 1fr 1fr;">
+                <button class="action-btn">프로필</button>
+                <button class="action-btn">사진첩</button>
+                <button class="action-btn" style="grid-column: span 2;">방명록</button>
+            </div>
         </div>
+
+        <div id="page5" class="page">
+            <img src="images/여성존.png" style="width:100%; border-radius: 10px;">
+            <div class="grid" style="margin-top:20px; grid-template-columns: 1fr 1fr;">
+                <button class="action-btn">프로필</button>
+                <button class="action-btn">사진첩</button>
+                <button class="action-btn">방명록</button>
+                <button class="action-btn">다이어리</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bottom-nav">
+        <div class="nav-item"><span class="nav-icon">📜</span><span>싱글백서</span></div>
+        <div class="nav-item"><span class="nav-icon">✒️</span><span>마이글</span></div>
+        <div class="nav-item"><span class="nav-icon">💬</span><span>채팅목록</span></div>
+        <div class="nav-item" onclick="openAdmin()"><span class="nav-icon">⚙️</span><span>설정</span></div>
     </footer>
+
+    <div id="admin-panel">
+        <h2 style="margin-bottom:20px;">관리자 설정</h2>
+        <div id="admin-fields"></div>
+        <button class="action-btn btn-gold" onclick="closeAdmin()">저장 및 닫기</button>
+    </div>
 </div>
 
 <script>
-    const state = {
-        isAdmin: false,
-        blocks: [
-            { id: 1, text: "남성타워", link: "" },
-            { id: 2, text: "여성타워", link: "" },
-            { id: 3, text: "모델하우스", link: "" },
-            { id: 4, text: "밴드타워", link: "https://www.band.us/@singletower" },
-            { id: 5, text: "", link: "" },
-            { id: 6, text: "자동차타워", link: "https://autonote.co.kr/" },
-            { id: 7, text: "족발타운", link: "" },
-            { id: 8, text: "회타운", link: "" },
-            { id: 9, text: "", link: "" },
-            { id: 10, text: "", link: "" },
-            { id: 11, text: "", link: "" },
-            { id: 12, text: "", link: "" }
-        ]
+    // 1페이지 블럭 데이터 (12개)
+    const blocks = [
+        { id: 1, text: "남성타워", link: 2 },
+        { id: 2, text: "여성타워", link: 3 },
+        { id: 3, text: "모델하우스", link: null },
+        { id: 4, text: "밴드타워", link: "https://www.band.us/@singletower" },
+        { id: 5, text: "", link: null },
+        { id: 6, text: "자동차타워", link: "https://autonote.co.kr/" },
+        { id: 7, text: "족발타운", link: null },
+        { id: 8, text: "회타운", link: null },
+        { id: 9, text: "", link: null },
+        { id: 10, text: "", link: null },
+        { id: 11, text: "", link: null },
+        { id: 12, text: "", link: null }
+    ];
+
+    let isAdmin = false;
+
+    // 인트로 종료 후 로고 표시 및 그리드 렌더링
+    window.onload = () => {
+        setTimeout(() => {
+            document.getElementById('intro-layer').style.display = 'none';
+            document.getElementById('main-logo').classList.add('active');
+            renderGrid();
+        }, 3000);
     };
 
+    // 그리드 렌더링 (이미지 자동 매칭 및 라인 숨김)
     function renderGrid() {
-        const grid = document.getElementById('mainGrid');
+        const grid = document.getElementById('main-grid');
         grid.innerHTML = '';
-
-        state.blocks.forEach((block, index) => {
-            const blockEl = document.createElement('div');
-            blockEl.className = 'block-item';
+        blocks.forEach((b, idx) => {
+            const el = document.createElement('div');
+            el.className = 'block';
             
-            // 행 1-12 누락 없이 block1.png - block12.png 자동 매칭
-            const imgPath = `images/block${index + 1}.png`;
-            
-            // 수정 핵심: 문구가 '없음'이어도 이미지는 항상 로드. 
-            // 텍스트 영역만 '없음'일 때 비워둠.
-            blockEl.innerHTML = `
-                <div class="img-wrapper">
-                    <img src="${imgPath}" onerror="this.style.opacity='0'" alt="">
-                </div>
-                <div class="block-label">${(block.text === "없음" && !state.isAdmin) ? "" : block.text}</div>
-            `;
+            // 일반 모드에서 문구가 없으면 라벨 영역 숨김 (이미지는 그대로 출력)
+            const labelContent = (isAdmin || b.text) ? b.text : '';
 
-            blockEl.onclick = () => {
-                if (block.link) window.location.href = block.link;
+            el.onclick = () => {
+                if(typeof b.link === 'number') navTo(b.link);
+                else if(b.link) window.location.href = b.link;
             };
 
-            grid.appendChild(blockEl);
+            // 행1=block1.png, 행2=block2.png 자동 매칭
+            el.innerHTML = `
+                <div class="img-wrap">
+                    <img src="images/block${b.id}.png" onerror="this.style.opacity='0'">
+                </div>
+                <div class="block-label">${labelContent}</div>
+            `;
+            grid.appendChild(el);
         });
-
-        if (state.isAdmin) renderAdminTools();
     }
 
-    function toggleAdmin() {
-        state.isAdmin = !state.isAdmin;
-        document.getElementById('adminPanel').style.display = state.isAdmin ? 'block' : 'none';
+    // 페이지 이동
+    function navTo(pageNum) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(`page${pageNum}`).classList.add('active');
+        document.getElementById('btn-home').style.display = (pageNum > 1) ? 'block' : 'none';
+        document.getElementById('content-scroll').scrollTop = 0;
+    }
+
+    // 문 열림 애니메이션 효과
+    function doorMove(target) {
+        const door = document.getElementById('door-wrap');
+        door.style.display = 'block';
+        setTimeout(() => door.classList.add('active'), 10);
+        setTimeout(() => {
+            navTo(target);
+            door.classList.remove('active');
+            setTimeout(() => door.style.display = 'none', 800);
+        }, 800);
+    }
+
+    // 관리자 모드
+    function openAdmin() {
+        isAdmin = true;
+        const fields = document.getElementById('admin-fields');
+        fields.innerHTML = '';
+        blocks.forEach((b, i) => {
+            const row = document.createElement('div');
+            row.className = 'admin-row';
+            row.innerHTML = `
+                <label>Block ${b.id} 문구 (이미지: block${b.id}.png)</label>
+                <input type="text" value="${b.text}" oninput="blocks[${i}].text=this.value">
+            `;
+            fields.appendChild(row);
+        });
+        document.getElementById('admin-panel').style.display = 'block';
         renderGrid();
     }
 
-    function renderAdminTools() {
-        const editors = document.getElementById('blockEditors');
-        editors.innerHTML = '<p style="font-size:12px;">블록 문구 수정:</p>';
-        state.blocks.forEach((block, i) => {
-            const btn = document.createElement('button');
-            btn.className = 'admin-btn';
-            btn.innerText = `행${i+1}`;
-            btn.onclick = () => {
-                const newText = prompt(`행${i+1} 문구 수정 (현재: ${block.text}):`, block.text);
-                if (newText !== null) {
-                    state.blocks[i].text = newText;
-                    renderGrid();
-                }
-            };
-            editors.appendChild(btn);
-        });
+    function closeAdmin() {
+        isAdmin = false;
+        document.getElementById('admin-panel').style.display = 'none';
+        renderGrid();
     }
-
-    function addNavItem() {
-        alert("헤더 목록 추가/수정/삭제 기능을 실행합니다.");
-    }
-
-    function handleNav(type) {
-        console.log("Nav:", type);
-    }
-
-    window.onload = renderGrid;
 </script>
-
 </body>
 </html>
