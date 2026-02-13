@@ -43,16 +43,22 @@
         #intro-screen img { width: 100%; height: 100%; object-fit: cover; animation: introFade 3s forwards; }
         @keyframes introFade { 0% { opacity: 1; } 90% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
 
-        /* 문 열림 애니메이션 효과 */
+        /* [NEW] 문 열림 애니메이션 효과 레이어 */
         #door-overlay {
-            position: absolute; inset: 0; z-index: 9000; display: none;
+            position: absolute; inset: 0; z-index: 9500; display: none; pointer-events: none;
         }
-        .door { position: absolute; top: 0; width: 50%; height: 100%; background: #111; transition: transform 0.8s ease-in-out; }
-        .door-left { left: 0; transform: translateX(-100%); border-right: 1px solid #333; }
-        .door-right { right: 0; transform: translateX(100%); border-left: 1px solid #333; }
-        #door-overlay.active { display: block; }
-        #door-overlay.active .door-left { transform: translateX(0); }
-        #door-overlay.active .door-right { transform: translateX(0); }
+        .door { 
+            position: absolute; top: 0; width: 50%; height: 100%; 
+            background: #1a1a1a; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
+            display: flex; align-items: center; justify-content: center;
+        }
+        .door-left { left: 0; transform: translateX(0); border-right: 1px solid #333; }
+        .door-right { right: 0; transform: translateX(0); border-left: 1px solid #333; }
+        
+        /* 애니메이션 실행 클래스 */
+        #door-overlay.open .door-left { transform: translateX(-100%); }
+        #door-overlay.open .door-right { transform: translateX(100%); }
+        #door-overlay.show { display: block; }
 
         /* 상단 헤더 & 로고 */
         .header-top { padding: 10px 0; text-align: center; position: relative; background: var(--bg-deep-grey); flex-shrink: 0; }
@@ -84,7 +90,7 @@
         .block-img { width: 100%; aspect-ratio: 1/1; background-color: var(--bg-deep-grey); object-fit: cover; display: block; }
         .block-text { color: var(--white); font-size: 11px; margin-top: 5px; height: 15px; text-align: center; }
 
-        /* 버튼 레이아웃 */
+        /* 버튼 레이아웃 (2열 배열 적용) */
         .btn-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
         .btn-action { 
             background: var(--ivory); border: none; padding: 15px 5px; border-radius: 8px; 
@@ -99,7 +105,7 @@
         .nav-item:active { transform: scale(0.9) translateY(2px); }
         .nav-icon { font-size: 18px; margin-bottom: 2px; }
 
-        /* 20페이지 소개서 */
+        /* 20페이지 소개서 스타일 */
         .intro-content { color: var(--white); line-height: 1.6; }
         .intro-content h2 { color: var(--ivory); margin-bottom: 15px; font-size: 18px; border-bottom: 1px solid #444; padding-bottom: 5px; }
         .step-item { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; margin-bottom: 15px; }
@@ -129,7 +135,7 @@
             <div id="page-2" class="page shimmer page-fade">
                 <img src="images/복도.png" style="width:100%; border-radius:10px;">
                 <div class="btn-container">
-                    <button class="btn-action btn-full" onclick="openDoorToPage(4)">🏠 My Zone</button>
+                    <button class="btn-action btn-full" onclick="openMyZoneAnimation(4)">🏠 My Zone</button>
                     <button class="btn-action">👀 이웃 둘러보기</button>
                     <button class="btn-action">📝 입주자 게시판</button>
                     <button class="btn-action btn-full">💬 입주자 채팅</button>
@@ -139,7 +145,7 @@
             <div id="page-3" class="page shimmer page-fade">
                 <img src="images/복도.png" style="width:100%; border-radius:10px;">
                 <div class="btn-container">
-                    <button class="btn-action btn-full" onclick="openDoorToPage(5)">🏠 My Zone</button>
+                    <button class="btn-action btn-full" onclick="openMyZoneAnimation(5)">🏠 My Zone</button>
                     <button class="btn-action">👀 이웃 둘러보기</button>
                     <button class="btn-action">📝 입주자 게시판</button>
                     <button class="btn-action btn-full">💬 입주자 채팅</button>
@@ -187,19 +193,19 @@
                     <h2>📋 싱글타워 완벽 이용법 (Step-by-Step)</h2>
                     <div class="step-item">
                         <span class="step-title">1단계: 모델하우스 투어 및 입주 신청</span>
-                        앱 메인 화면의 '모델하우스' 블록을 클릭하세요. 싱글타워가 제공하는 남성존/여성존의 세련된 템플릿을 미리 확인할 수 있습니다. 마음에 드는 타워를 선택한 후 '입주 신청'을 완료하면 당신만의 전용 공간이 생성됩니다.
+                        앱 메인 화면의 '모델하우스' 블록을 클릭하세요. 싱글타워가 제공하는 남성존/여성존의 세련된 템플릿을 미리 확인할 수 있습니다.
                     </div>
                     <div class="step-item">
                         <span class="step-title">2단계: 나만의 'My Zone' 꾸미기</span>
-                        입주가 완료되면 각 타워 내부에 배정된 'My Zone'에서 <b>프로필</b>로 개성을 나타내고, <b>사진첩/다이어리</b>로 소중한 일상을 기록하세요.
+                        입주가 완료되면 각 타워 내부에 배정된 'My Zone'에서 프로필로 개성을 나타내고, 사진첩/다이어리로 소중한 일상을 기록하세요.
                     </div>
                     <div class="step-item">
                         <span class="step-title">3단계: 복도에서 만나는 이웃들</span>
-                        공용 공간인 '복도'에서 매력적인 이웃들의 홈피를 방문하고, <b>입주자 게시판</b>에서 품격 있는 대화를 나누며 공감대를 형성하세요.
+                        공용 공간인 '복도'에서 매력적인 이웃들의 홈피를 방문하고, 입주자 게시판에서 품격 있는 대화를 나누며 공감대를 형성하세요.
                     </div>
                     <div class="step-item">
                         <span class="step-title">4단계: 실시간 입주자 채팅</span>
-                        마음이 맞는 이웃과는 보안이 강화된 <b>입주자 채팅</b>을 통해 더 깊은 인연을 맺을 수 있습니다. 오직 프리미엄 유저들만의 특권입니다.
+                        마음이 맞는 이웃과는 보안이 강화된 입주자 채팅을 통해 더 깊은 인연을 맺을 수 있습니다.
                     </div>
                 </div>
             </div>
@@ -231,7 +237,6 @@
 
         let isAdmin = false;
 
-        // 1페이지 그리드 생성 및 이미지 자동 매칭
         function initGrid() {
             const grid = document.getElementById('grid-main');
             grid.innerHTML = '';
@@ -239,11 +244,10 @@
                 const b = document.createElement('div');
                 b.className = 'block';
                 
-                // 이미지 매칭: block5, 9, 12 등 문구 없어도 이미지는 자동 로드 시도
                 const img = document.createElement('img');
                 img.className = 'block-img';
                 img.src = `images/block${data.id}.png`;
-                img.onerror = () => { img.style.opacity = '0'; }; // 이미지 없을 때만 투명화
+                img.onerror = () => { img.style.opacity = '0'; };
 
                 const label = document.createElement('div');
                 label.className = 'block-text';
@@ -252,11 +256,7 @@
                 b.appendChild(img);
                 b.appendChild(label);
 
-                // 빈 블록 라인 숨김 및 배경색 유지 로직
-                if (!data.text && !isAdmin) {
-                    label.style.display = 'none';
-                    // 문구가 없어도 이미지가 있으면 블록은 유지되나, 아무것도 없으면 공간만 유지
-                }
+                if (!data.text && !isAdmin) { label.style.display = 'none'; }
 
                 b.onclick = () => {
                     if (typeof data.link === 'number') changePage(data.link);
@@ -266,13 +266,12 @@
             });
         }
 
-        // 페이지 전환
+        // 일반 페이지 전환
         function changePage(pageNum) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             const target = document.getElementById(`page-${pageNum}`);
             if (target) target.classList.add('active');
 
-            // 헤더 및 홈버튼 제어
             const bottomNav = document.getElementById('header-bottom');
             const homeBtn = document.getElementById('btn-home');
             
@@ -282,17 +281,31 @@
             document.getElementById('content-area').scrollTop = 0;
         }
 
-        function goToHome() { changePage(1); }
-
-        // My Zone 전용 문 열림 애니메이션
-        function openDoorToPage(pageNum) {
+        // [NEW] My Zone 입장 시 문 열림 애니메이션 함수
+        function openMyZoneAnimation(targetPageNum) {
             const overlay = document.getElementById('door-overlay');
-            overlay.classList.add('active');
+            
+            // 1. 문을 닫힌 상태로 화면에 표시
+            overlay.classList.add('show');
+            overlay.classList.remove('open');
+            
+            // 2. 약간의 지연 후 문이 열리는 애니메이션 시작
             setTimeout(() => {
-                changePage(pageNum);
-                overlay.classList.remove('active');
-            }, 850);
+                overlay.classList.add('open');
+                // 문이 절반쯤 열렸을 때 페이지를 미리 바꿈 (자연스러운 전환)
+                setTimeout(() => {
+                    changePage(targetPageNum);
+                }, 400);
+            }, 50);
+
+            // 3. 애니메이션 종료 후 레이어 숨김
+            setTimeout(() => {
+                overlay.classList.remove('show');
+                overlay.classList.remove('open');
+            }, 1000);
         }
+
+        function goToHome() { changePage(1); }
 
         function toggleAdmin() {
             isAdmin = !isAdmin;
@@ -300,7 +313,6 @@
             initGrid();
         }
 
-        // 인트로 후 실행
         window.onload = () => {
             initGrid();
             setTimeout(() => { document.getElementById('intro-screen').style.display = 'none'; }, 3000);
