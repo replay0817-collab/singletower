@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Single Tower</title>
+    <title>싱글타워 앱</title>
     <style>
         :root {
             --bg-deep-grey: #2C2C2C;
@@ -11,6 +11,7 @@
             --white: #FFFFFF;
             --black: #000000;
             --blue: #0000FF;
+            --gold: #D4AF37;
         }
 
         * {
@@ -24,7 +25,7 @@
         body, html {
             width: 100%; height: 100%;
             background-color: #000;
-            font-family: 'Apple SD Gothic Neo', sans-serif;
+            font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
             overflow: hidden;
         }
 
@@ -47,26 +48,24 @@
         }
         #intro-layer img {
             width: 100%; height: 100%; object-fit: cover;
-            animation: introAnimation 3s ease-in-out forwards;
+            animation: introAni 3s ease-in-out forwards;
         }
-        @keyframes introAnimation {
+        @keyframes introAni {
             0% { opacity: 0; transform: scale(1.1); }
-            20% { opacity: 1; transform: scale(1); }
-            80% { opacity: 1; }
+            15% { opacity: 1; transform: scale(1); }
+            85% { opacity: 1; }
             100% { opacity: 0; visibility: hidden; }
         }
 
-        /* [상단 영역] */
-        .header-top {
+        /* 상단 헤더 및 로고 */
+        .top-nav {
             padding: 12px 0 8px;
             text-align: center;
             position: relative;
             z-index: 100;
             background: var(--bg-deep-grey);
         }
-
-        /* 로고 애니메이션: 블루에서 블랙으로 좌에서 우로 흐르는 효과 */
-        .logo-text {
+        .logo-main {
             display: inline-block;
             font-family: 'Georgia', serif;
             font-size: 24px;
@@ -83,15 +82,14 @@
             100% { background-position: 0% center; }
         }
 
-        /* 홈버튼 (2페이지 이상 노출) */
-        .home-btn {
-            position: absolute; left: 15px; top: 10px;
+        .btn-back-home {
+            position: absolute; left: 15px; top: 12px;
             font-size: 20px; cursor: pointer; display: none;
             z-index: 101; transition: transform 0.1s;
         }
-        .home-btn:active { transform: scale(0.85); }
+        .btn-back-home:active { transform: scale(0.85); }
 
-        /* [콘텐츠 영역] */
+        /* 콘텐츠 뷰 및 애니메이션 */
         #main-view {
             flex: 1; overflow-y: auto; padding: 10px;
             scrollbar-width: none;
@@ -101,92 +99,87 @@
         .page { display: none; width: 100%; }
         .page.active { display: block; }
 
-        /* 1페이지 제외 반짝임 애니메이션 */
-        .shimmer-page.active {
-            animation: shimmerEffect 2s infinite ease-in-out;
-        }
+        /* 1페이지 제외 반짝임 */
+        .shimmer-on.active { animation: shimmerEffect 2s infinite ease-in-out; }
         @keyframes shimmerEffect {
             0%, 100% { filter: brightness(1); }
-            50% { filter: brightness(1.2); }
+            50% { filter: brightness(1.15); }
         }
 
-        /* 2, 3페이지 진입 초기 어두웠다 밝아지는 효과 */
-        .fade-in-dark.active {
-            animation: fadeInFromDark 1s ease-out forwards, shimmerEffect 2s infinite ease-in-out 1s;
-        }
-        @keyframes fadeInFromDark {
+        /* 특정 페이지 진입 페이드 */
+        .entry-fade.active { animation: entryFadeEffect 1s ease-out forwards; }
+        @keyframes entryFadeEffect {
             0% { filter: brightness(0); }
             100% { filter: brightness(1); }
         }
 
-        /* [그리드 레이아웃] */
+        /* 그리드 시스템 */
         .tower-grid {
             display: grid; grid-template-columns: repeat(3, 1fr);
             gap: 15px; border: none;
         }
-        .block-unit {
+        .block-item {
             display: flex; flex-direction: column; align-items: center;
             cursor: pointer; transition: transform 0.1s;
             background-color: var(--bg-deep-grey);
         }
-        .block-unit:active { transform: scale(0.9) translateY(3px); }
-        
-        .img-slot {
+        .block-item:active { transform: scale(0.9) translateY(3px); }
+        .img-box {
             width: 100%; aspect-ratio: 1/1;
             display: flex; align-items: center; justify-content: center;
-            overflow: hidden; border: none;
+            overflow: hidden;
         }
-        .img-slot img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
-        
-        .block-desc {
+        .img-box img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+        .block-txt {
             margin-top: 5px; font-size: 11px; color: var(--white);
             height: 14px; text-align: center;
         }
 
-        /* [입체적 버튼] */
-        .action-btn {
-            width: 100%; padding: 12px; background: var(--ivory);
-            border: none; border-radius: 10px; font-weight: bold;
+        /* 공통 버튼 */
+        .btn-action {
+            width: 100%; padding: 13px; background: var(--ivory);
+            border: none; border-radius: 12px; font-weight: bold;
             margin-top: 10px; box-shadow: 0 4px 0 #ccc;
             cursor: pointer; transition: 0.1s;
         }
-        .action-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #ccc; }
+        .btn-action:active { transform: translateY(3px); box-shadow: 0 1px 0 #ccc; }
+        .btn-gold { background: var(--gold); color: white; box-shadow: 0 4px 0 #b38f2d; }
 
-        /* [하단 헤더 (세로 축소)] */
-        #bottom-nav {
-            height: 50px; background: var(--ivory);
+        /* 하단 네비게이션 */
+        #bottom-header {
+            height: 52px; background: var(--ivory);
             display: flex; justify-content: space-around; align-items: center;
             z-index: 1000; position: relative;
         }
-        .nav-link {
+        .nav-item {
             display: flex; flex-direction: column; align-items: center;
             font-size: 9px; color: #333; cursor: pointer; flex: 1;
         }
-        .nav-link:active { transform: scale(0.9); }
-        .nav-icon { font-size: 16px; margin-bottom: 1px; }
+        .nav-item:active { transform: scale(0.9); }
+        .nav-icon { font-size: 18px; margin-bottom: 2px; }
 
-        /* [문 열림 애니메이션] */
-        #door-overlay {
+        /* 문 열림 효과 */
+        #door-layer {
             position: absolute; inset: 0; z-index: 5000;
             display: none; pointer-events: none;
         }
         .door-panel {
             position: absolute; top: 0; width: 50%; height: 100%;
-            background: #111; transition: transform 0.8s ease-in-out;
+            background: #111; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .door-left { left: 0; transform: translateX(-100%); }
-        .door-right { right: 0; transform: translateX(100%); }
-        #door-overlay.active .door-left { transform: translateX(0); }
-        #door-overlay.active .door-right { transform: translateX(0); }
+        .door-l { left: 0; transform: translateX(-100%); }
+        .door-r { right: 0; transform: translateX(100%); }
+        #door-layer.active .door-l { transform: translateX(0); }
+        #door-layer.active .door-r { transform: translateX(0); }
 
-        /* 관리자 모드 */
+        /* 관리자 패널 */
         #admin-panel {
             display: none; position: absolute; inset: 0;
             background: rgba(255,255,255,0.98); z-index: 10001; padding: 20px;
             overflow-y: auto; color: #333;
         }
-        .admin-item { margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .admin-item input { width: 100%; padding: 8px; margin-top: 5px; }
+        .admin-row { margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+        .admin-row input { width: 100%; padding: 8px; margin-top: 5px; }
     </style>
 </head>
 <body oncontextmenu="return false">
@@ -194,73 +187,81 @@
 <div id="app-frame">
     <div id="intro-layer"><img src="images/인트로.png"></div>
     
-    <div id="door-overlay">
-        <div class="door-panel door-left"></div>
-        <div class="door-panel door-right"></div>
+    <div id="door-layer">
+        <div class="door-panel door-l"></div>
+        <div class="door-panel door-r"></div>
     </div>
 
-    <div class="header-top">
-        <div class="home-btn" id="home-trigger" onclick="navigateTo(1)">🏠</div>
-        <div class="logo-text">Single Tower</div>
+    <div class="top-nav">
+        <div class="btn-back-home" id="btn-home" onclick="navTo(1)">🏠</div>
+        <div class="logo-main">Single Tower</div>
     </div>
 
     <div id="main-view">
         <div id="page1" class="page active">
-            <div class="tower-grid" id="main-grid"></div>
+            <div class="tower-grid" id="grid-home"></div>
         </div>
 
-        <div id="page2" class="page fade-in-dark">
-            <img src="images/복도.png" style="width:100%; border-radius:10px;">
-            <button class="action-btn" onclick="doorAnimate(4)" style="background:#D4AF37; color:white; box-shadow:0 4px 0 #b38f2d;">My Zone</button>
-            <button class="action-btn">이웃 둘러보기</button>
+        <div id="page2" class="page entry-fade shimmer-on">
+            <img src="images/복도.png" style="width:100%; border-radius:15px;">
+            <button class="btn-action btn-gold" onclick="doorOpen(4)">My Zone</button>
+            <button class="btn-action">이웃 둘러보기</button>
+            <button class="btn-action">채팅하기</button>
         </div>
 
-        <div id="page3" class="page fade-in-dark">
-            <img src="images/복도.png" style="width:100%; border-radius:10px;">
-            <button class="action-btn" onclick="doorAnimate(5)" style="background:#D4AF37; color:white; box-shadow:0 4px 0 #b38f2d;">My Zone</button>
-            <button class="action-btn">이웃 둘러보기</button>
+        <div id="page3" class="page entry-fade shimmer-on">
+            <img src="images/복도.png" style="width:100%; border-radius:15px;">
+            <button class="btn-action btn-gold" onclick="doorOpen(5)">My Zone</button>
+            <button class="btn-action">이웃 둘러보기</button>
+            <button class="btn-action">채팅하기</button>
         </div>
 
-        <div id="page4" class="page shimmer-page">
-            <img src="images/남성존.png" style="width:100%; border-radius:10px;">
+        <div id="page4" class="page shimmer-on">
+            <img src="images/남성존.png" style="width:100%; border-radius:15px;">
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
-                <button class="action-btn">프로필</button>
-                <button class="action-btn">사진첩</button>
-                <button class="action-btn">방명록</button>
-                <button class="action-btn">다이어리</button>
+                <button class="btn-action">프로필</button>
+                <button class="btn-action">사진첩</button>
+                <button class="btn-action">방명록</button>
+                <button class="btn-action">다이어리</button>
             </div>
         </div>
 
-        <div id="page5" class="page shimmer-page">
-            <img src="images/여성존.png" style="width:100%; border-radius:10px;">
+        <div id="page5" class="page shimmer-on">
+            <img src="images/여성존.png" style="width:100%; border-radius:15px;">
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
-                <button class="action-btn">프로필</button>
-                <button class="action-btn">사진첩</button>
-                <button class="action-btn">방명록</button>
-                <button class="action-btn">다이어리</button>
+                <button class="btn-action">프로필</button>
+                <button class="btn-action">사진첩</button>
+                <button class="btn-action">방명록</button>
+                <button class="btn-action">다이어리</button>
             </div>
+        </div>
+
+        <div id="page10" class="page entry-fade shimmer-on">
+            <img src="images/모델하우스.png" style="width:100%; border-radius:15px;">
+            <button class="btn-action btn-gold">남성타워 입주신청</button>
+            <button class="btn-action btn-gold">여성타워 입주신청</button>
         </div>
     </div>
 
-    <footer id="bottom-nav">
-        <div class="nav-link"><span class="nav-icon">📜</span><span>싱글백서</span></div>
-        <div class="nav-link"><span class="nav-icon">✒️</span><span>마이글</span></div>
-        <div class="nav-item nav-link"><span class="nav-icon">💬</span><span>채팅목록</span></div>
-        <div class="nav-link" onclick="openAdmin()"><span class="nav-icon">⚙️</span><span>설정</span></div>
+    <footer id="bottom-header">
+        <div class="nav-item"><span class="nav-icon">📜</span><span>싱글백서</span></div>
+        <div class="nav-item"><span class="nav-icon">✒️</span><span>마이글</span></div>
+        <div class="nav-item"><span class="nav-icon">💬</span><span>채팅목록</span></div>
+        <div class="nav-item" onclick="showAdmin()"><span class="nav-icon">⚙️</span><span>설정</span></div>
     </footer>
 
     <div id="admin-panel">
-        <h3 style="margin-bottom:15px;">관리자 모드</h3>
+        <h3 style="margin-bottom:15px;">Admin Control</h3>
         <div id="admin-list"></div>
-        <button class="action-btn" onclick="closeAdmin()" style="background:#D4AF37; color:white;">저장 후 닫기</button>
+        <button class="btn-action btn-gold" onclick="hideAdmin()">Save & Close</button>
     </div>
 </div>
 
 <script>
-    const towerBlocks = [
+    const towerData = [
         { id: 1, text: "남성타워", link: 2 },
         { id: 2, text: "여성타워", link: 3 },
-        { id: 3, text: "모델하우스", link: null },
+        { id: 3, text: "모델하우스", link: 10 },
         { id: 4, text: "밴드타워", link: "https://www.band.us/@singletower" },
         { id: 5, text: "", link: null },
         { id: 6, text: "자동차타워", link: "https://autonote.co.kr/" },
@@ -272,86 +273,82 @@
         { id: 12, text: "", link: null }
     ];
 
-    let isAdmin = false;
+    let isAdminMode = false;
 
     window.onload = () => {
         setTimeout(() => {
             document.getElementById('intro-layer').style.display = 'none';
-            renderGrid();
+            buildGrid();
         }, 3000);
     };
 
-    function renderGrid() {
-        const grid = document.getElementById('main-grid');
+    function buildGrid() {
+        const grid = document.getElementById('grid-home');
         grid.innerHTML = '';
-        towerBlocks.forEach((item) => {
-            const block = document.createElement('div');
-            block.className = 'block-unit';
-            block.onclick = () => {
-                if(typeof item.link === 'number') navigateTo(item.link);
+        towerData.forEach((item) => {
+            const div = document.createElement('div');
+            div.className = 'block-item';
+            div.onclick = () => {
+                if(typeof item.link === 'number') navTo(item.link);
                 else if(item.link) window.location.href = item.link;
             };
 
-            block.innerHTML = `
-                <div class="img-slot">
+            div.innerHTML = `
+                <div class="img-box">
                     <img src="images/block${item.id}.png" onerror="this.style.opacity='0'">
                 </div>
-                <div class="block-desc">${(isAdmin || item.text) ? item.text : ''}</div>
+                <div class="block-txt">${(isAdminMode || item.text) ? item.text : ''}</div>
             `;
-            grid.appendChild(block);
+            grid.appendChild(div);
         });
     }
 
-    function navigateTo(pageNum) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        const target = document.getElementById(`page${pageNum}`);
+    function navTo(p) {
+        document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+        const target = document.getElementById(`page${p}`);
         if(target) target.classList.add('active');
 
-        // 홈버튼 제어
-        document.getElementById('home-trigger').style.display = (pageNum > 1) ? 'block' : 'none';
-        
-        // 하단 헤더 제어 (1페이지에서만 노출)
-        document.getElementById('bottom-nav').style.display = (pageNum === 1) ? 'flex' : 'none';
+        // 홈버튼/하단헤더 가시성
+        document.getElementById('btn-home').style.display = (p > 1) ? 'block' : 'none';
+        document.getElementById('bottom-header').style.display = (p === 1) ? 'flex' : 'none';
 
-        // 1페이지 복귀 시 블럭 재렌더링 (번쩍거림 제거를 위해 단순 갱신)
-        if(pageNum === 1) renderGrid();
-        
+        if(p === 1) buildGrid();
         document.getElementById('main-view').scrollTop = 0;
     }
 
-    function doorAnimate(targetPage) {
-        const door = document.getElementById('door-overlay');
-        door.style.display = 'block';
-        setTimeout(() => door.classList.add('active'), 10);
+    function doorOpen(target) {
+        const layer = document.getElementById('door-layer');
+        layer.style.display = 'block';
+        setTimeout(() => layer.classList.add('active'), 10);
         
         setTimeout(() => {
-            navigateTo(targetPage);
-            door.classList.remove('active');
-            setTimeout(() => { door.style.display = 'none'; }, 800);
+            navTo(target);
+            layer.classList.remove('active');
+            setTimeout(() => { layer.style.display = 'none'; }, 800);
         }, 850);
     }
 
-    function openAdmin() {
-        isAdmin = true;
+    function showAdmin() {
+        isAdminMode = true;
         const list = document.getElementById('admin-list');
         list.innerHTML = '';
-        towerBlocks.forEach((item, idx) => {
-            const div = document.createElement('div');
-            div.className = 'admin-item';
-            div.innerHTML = `
-                <label>블록 ${item.id} 문구</label>
-                <input type="text" value="${item.text}" oninput="towerBlocks[${idx}].text=this.value">
+        towerData.forEach((item, idx) => {
+            const row = document.createElement('div');
+            row.className = 'admin-row';
+            row.innerHTML = `
+                <label>Block ${item.id} Text</label>
+                <input type="text" value="${item.text}" oninput="towerData[${idx}].text=this.value">
             `;
-            list.appendChild(div);
+            list.appendChild(row);
         });
         document.getElementById('admin-panel').style.display = 'block';
-        renderGrid();
+        buildGrid();
     }
 
-    function closeAdmin() {
-        isAdmin = false;
+    function hideAdmin() {
+        isAdminMode = false;
         document.getElementById('admin-panel').style.display = 'none';
-        renderGrid();
+        buildGrid();
     }
 </script>
 </body>
