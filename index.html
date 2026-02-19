@@ -179,7 +179,8 @@
                     <button class="btn-action">📸 사진첩</button>
                     <button class="btn-action">📖 방명록</button>
                     <button class="btn-action">📒 다이어리</button>
-                    <button class="btn-action btn-full">🎨 나의스킨</button>
+                    <button class="btn-action">📩 쪽지함</button>
+                    <button class="btn-action">🎁 내 아이템</button>
                 </div>
             </div>
 
@@ -190,7 +191,8 @@
                     <button class="btn-action">📸 사진첩</button>
                     <button class="btn-action">📖 방명록</button>
                     <button class="btn-action">📒 다이어리</button>
-                    <button class="btn-action btn-full">🎨 나의스킨</button>
+                    <button class="btn-action">📩 쪽지함</button>
+                    <button class="btn-action">🎁 내 아이템</button>
                 </div>
             </div>
 
@@ -236,7 +238,7 @@
         <footer class="header-bottom" id="header-bottom">
             <div class="nav-item" onclick="changePage(20)"><div class="nav-icon">📜</div>싱글백서</div>
             <div class="nav-item"><div class="nav-icon">✒️</div>마이글</div>
-            <div class="nav-item"><div class="nav-icon">💬</div>채팅목록</div>
+            <div class="nav-item"><div class="nav-icon">💬</div>채팅</div>
             <div class="nav-item" onclick="toggleAdmin()"><div class="nav-icon">⚙️</div>설정</div>
         </footer>
     </div>
@@ -326,15 +328,10 @@
             initGrid();
         }
 
-        // 인트로 후 실행
         window.onload = () => {
             initGrid();
-            // 모든 이미지에 대해 모바일 길게 누르기 메뉴 차단 추가
             document.querySelectorAll('img').forEach(img => {
                 img.addEventListener('contextmenu', e => e.preventDefault());
-                img.addEventListener('touchstart', e => {
-                    // 길게 누르기 방지는 CSS touch-callout: none 으로 처리되지만 스크립트로 보강 가능
-                }, {passive: true});
             });
             setTimeout(() => { document.getElementById('intro-screen').style.display = 'none'; }, 3000);
         };
