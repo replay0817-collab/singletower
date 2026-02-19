@@ -138,8 +138,21 @@
         .btn-action { 
             background: var(--ivory); border: none; padding: 15px 5px; border-radius: 8px; 
             font-weight: bold; font-size: 13px; box-shadow: 0 4px #ccc; cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .btn-action:active { transform: translateY(2px); box-shadow: 0 1px #ccc; }
+        
+        /* [수정] 스킨 사러가기 버튼 전용 입체적 동작 스타일 */
+        .btn-3d-action {
+            perspective: 500px;
+            transform-style: preserve-3d;
+        }
+        .btn-3d-action:active {
+            transform: perspective(500px) rotateX(15deg) translateY(4px) scale(0.95);
+            box-shadow: 0 2px #aaa, 0 10px 20px rgba(0,0,0,0.3);
+            background: #eee;
+        }
+
         .btn-full { grid-column: span 2; }
 
         .header-bottom { height: 50px; background: var(--ivory); display: flex; justify-content: space-around; align-items: center; flex-shrink: 0; }
@@ -239,16 +252,16 @@
             <div id="page-10" class="page shimmer page-fade">
                 <img src="images/모델하우스.png" style="width:100%; border-radius:10px;">
                 <div class="btn-container">
-                    <button class="btn-action btn-full" onclick="changePage(12)">스킨 사러가기</button>
+                    <button class="btn-action btn-full btn-3d-action" onclick="changePage(12)">스킨 사러가기</button>
                     <button class="btn-action btn-full">BGM 사러가기</button>
                     <button class="btn-action btn-full" onclick="changePage(11)">✨ 템플릿 미리보기</button>
                 </div>
             </div>
 
             <div id="page-11" class="page shimmer">
-                <p style="color:white; text-align:center; margin-bottom:10px;">뉴남성존 <span class="template-price">3,900원</span></p>
+                <p style="color:white; text-align:center; margin-bottom:10px;">블루미드나잇 스킨 <span class="template-price"></span></p>
                 <img src="images/뉴남성존.png" style="width:100%; border-radius:10px; margin-bottom:20px;">
-                <p style="color:white; text-align:center; margin-bottom:10px;">뉴여성존 <span class="template-price">3,900원</span></p>
+                <p style="color:white; text-align:center; margin-bottom:10px;">핑크포레스트 스킨 <span class="template-price"></span></p>
                 <img src="images/뉴여성존.png" style="width:100%; border-radius:10px;">
             </div>
 
@@ -256,14 +269,14 @@
                 <div class="shop-item">
                     <img src="images/뉴남성존.png" class="shop-img">
                     <div class="shop-info">
-                        <span class="shop-name">뉴남성존</span>
+                        <span class="shop-name">블루미드나잇 스킨  3,700원(VAT 포함)</span>
                         <button class="btn-pay">결제하기</button>
                     </div>
                 </div>
                 <div class="shop-item">
                     <img src="images/뉴여성존.png" class="shop-img">
                     <div class="shop-info">
-                        <span class="shop-name">뉴여성존</span>
+                        <span class="shop-name">핑크포레스트 스킨  3,700원(VAT 포함)</span>
                         <button class="btn-pay">결제하기</button>
                     </div>
                 </div>
