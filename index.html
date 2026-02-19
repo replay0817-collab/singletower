@@ -11,9 +11,10 @@
             --white: #FFFFFF;
             --black: #000000;
             --blue: #0000FF;
+            --input-bg: rgba(255, 255, 255, 0.1);
         }
 
-        /* [보안 설정] 모든 요소에 대해 선택 및 복사 방지 */
+        /* [보안 설정] 선택/복사/드래그 방지 및 이미지 롱클릭 방지 */
         * { 
             box-sizing: border-box; margin: 0; padding: 0; 
             -webkit-tap-highlight-color: transparent; 
@@ -21,6 +22,7 @@
             -webkit-user-select: none; 
             -moz-user-select: none; 
             -ms-user-select: none;
+            -webkit-touch-callout: none; /* iOS 이미지 롱클릭 방지 */
         }
         
         img {
@@ -29,7 +31,7 @@
             -moz-user-drag: none;
             -o-user-drag: none;
             user-drag: none;
-            pointer-events: auto;
+            pointer-events: none; /* 클릭 이벤트 방지 (필요시 JS로 제어) */
         }
 
         body, html { 
@@ -50,6 +52,7 @@
             overflow: hidden;
         }
 
+        /* 인트로 */
         #intro-screen {
             position: absolute; inset: 0; z-index: 10000;
             background: var(--bg-deep-grey);
@@ -58,13 +61,39 @@
         #intro-screen img { width: 100%; height: 100%; object-fit: cover; animation: introFade 3s forwards; }
         @keyframes introFade { 0% { opacity: 1; } 90% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
 
-        #door-overlay {
-            position: absolute; inset: 0; z-index: 9500; display: none; pointer-events: none;
+        /* 로그인 페이지 (0페이지) 스타일 */
+        .login-container {
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
         }
-        .door { 
-            position: absolute; top: 0; width: 50%; height: 100%; 
-            background: #1a1a1a; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
+        .login-img { width: 80%; border-radius: 20px; margin-bottom: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .login-input-group { width: 100%; margin-bottom: 15px; }
+        .login-input {
+            width: 100%; padding: 12px 15px; margin-bottom: 10px;
+            background: var(--input-bg); border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px; color: var(--white); outline: none;
+            user-select: auto; -webkit-user-select: auto; /* 입력란은 선택 허용 */
         }
+        .login-btn-main {
+            width: 100%; padding: 12px; background: var(--blue); color: #fff;
+            border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 10px;
+        }
+        .login-sub-links { color: #aaa; font-size: 12px; margin-bottom: 30px; }
+        .social-login-group { width: 100%; display: flex; flex-direction: column; gap: 8px; }
+        .social-btn {
+            width: 100%; padding: 10px; border-radius: 8px; border: none; font-size: 13px;
+            font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+        .google { background: #fff; color: #333; }
+        .naver { background: #03C75A; color: #fff; }
+        .kakao { background: #FEE500; color: #3E1717; }
+
+        /* 애니메이션 및 공통 */
+        #door-overlay { position: absolute; inset: 0; z-index: 9500; display: none; pointer-events: none; }
+        .door { position: absolute; top: 0; width: 50%; height: 100%; background: #1a1a1a; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
         .door-left { left: 0; transform: translateX(0); border-right: 1px solid #333; }
         .door-right { right: 0; transform: translateX(0); border-left: 1px solid #333; }
         #door-overlay.open .door-left { transform: translateX(-100%); }
@@ -93,14 +122,13 @@
 
         .grid-main { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         
-        /* 밴드타워 전용 그리드 스타일 (1~6번 합치기) */
         #grid-band-tower .block:nth-child(1) { grid-column: span 3; }
-        #grid-band-tower .block:nth-child(1) .block-img { aspect-ratio: 3/2; } /* 합쳐진 이미지 비율 조정 */
-        #grid-band-tower .block:nth-child(n+2):nth-child(-n+6) { display: none; } /* 2~6번 블록은 숨김 */
+        #grid-band-tower .block:nth-child(1) .block-img { aspect-ratio: 3/2; }
+        #grid-band-tower .block:nth-child(n+2):nth-child(-n+6) { display: none; }
 
         .block { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: transform 0.1s; border: none; }
         .block:active { transform: scale(0.9) translateY(3px); }
-        .block-img { width: 100%; aspect-ratio: 1/1; background-color: var(--bg-deep-grey); object-fit: cover; display: block; border-radius: 8px; }
+        .block-img { width: 100%; aspect-ratio: 1/1; background-color: var(--bg-deep-grey); object-fit: cover; display: block; border-radius: 8px; pointer-events: auto; }
         .block-text { color: var(--white); font-size: 11px; margin-top: 5px; height: 15px; text-align: center; white-space: nowrap; overflow: hidden; }
 
         .btn-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
@@ -134,13 +162,32 @@
             <div class="door door-right"></div>
         </div>
 
-        <header class="header-top">
+        <header class="header-top" id="main-header" style="display: none;">
             <div class="btn-home" id="btn-home" onclick="goToHome()">🏠</div>
             <div class="logo">Single Tower</div>
         </header>
 
         <main id="content-area">
-            <div id="page-1" class="page active">
+            <div id="page-0" class="page active">
+                <div class="login-container">
+                    <img src="images/로그인.png" class="login-img">
+                    <div class="login-input-group">
+                        <input type="text" id="login-id" class="login-input" placeholder="아이디">
+                        <input type="password" id="login-pw" class="login-input" placeholder="패스워드">
+                        <button class="login-btn-main" onclick="handleLogin()">로그인</button>
+                    </div>
+                    <div class="login-sub-links">
+                        <span>회원가입</span> | <span>ID/PW 찾기</span>
+                    </div>
+                    <div class="social-login-group">
+                        <button class="social-btn google">구글 간편로그인</button>
+                        <button class="social-btn naver">네이버 간편로그인</button>
+                        <button class="social-btn kakao">카카오 간편로그인</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-1" class="page">
                 <div class="grid-main" id="grid-main"></div>
             </div>
 
@@ -149,7 +196,7 @@
             </div>
 
             <div id="page-2" class="page shimmer page-fade">
-                <img src="images/복도.png" style="width:100%; border-radius:10px;">
+                <img src="images/복도.png" style="width:100%; border-radius:10px; pointer-events: auto;">
                 <div class="btn-container">
                     <button class="btn-action btn-full" onclick="openMyZoneAnimation(4)">🏠 My Zone</button>
                     <button class="btn-action">👀 이웃 둘러보기</button>
@@ -158,18 +205,8 @@
                 </div>
             </div>
 
-            <div id="page-3" class="page shimmer page-fade">
-                <img src="images/복도.png" style="width:100%; border-radius:10px;">
-                <div class="btn-container">
-                    <button class="btn-action btn-full" onclick="openMyZoneAnimation(5)">🏠 My Zone</button>
-                    <button class="btn-action">👀 이웃 둘러보기</button>
-                    <button class="btn-action">📝 입주자 게시판</button>
-                    <button class="btn-action btn-full">💬 입주자 채팅</button>
-                </div>
-            </div>
-
             <div id="page-4" class="page shimmer">
-                <img src="images/남성존.png" style="width:100%; border-radius:10px;">
+                <img src="images/남성존.png" style="width:100%; border-radius:10px; pointer-events: auto;">
                 <div class="btn-container">
                     <button class="btn-action">👤 프로필</button>
                     <button class="btn-action">📸 사진첩</button>
@@ -179,51 +216,9 @@
                     <button class="btn-action">🎁 내 아이템</button>
                 </div>
             </div>
+            </main>
 
-            <div id="page-5" class="page shimmer">
-                <img src="images/여성존.png" style="width:100%; border-radius:10px;">
-                <div class="btn-container">
-                    <button class="btn-action">👤 프로필</button>
-                    <button class="btn-action">📸 사진첩</button>
-                    <button class="btn-action">📖 방명록</button>
-                    <button class="btn-action">📒 다이어리</button>
-                    <button class="btn-action">📩 쪽지함</button>
-                    <button class="btn-action">🎁 내 아이템</button>
-                </div>
-            </div>
-
-            <div id="page-10" class="page shimmer page-fade">
-                <img src="images/모델하우스.png" style="width:100%; border-radius:10px;">
-                <div class="btn-container">
-                    <button class="btn-action btn-full">스킨 사러가기</button>
-                    <button class="btn-action btn-full">BGM 사러가기</button>
-                    <button class="btn-action btn-full" onclick="changePage(11)">✨ 템플릿 미리보기</button>
-                </div>
-            </div>
-
-            <div id="page-11" class="page shimmer">
-                <p style="color:white; text-align:center; margin-bottom:10px;">남성 ZONE <span class="template-price">3,900원</span></p>
-                <img src="images/뉴남성존.png" style="width:100%; border-radius:10px; margin-bottom:20px;">
-                <p style="color:white; text-align:center; margin-bottom:10px;">여성 ZONE <span class="template-price">3,900원</span></p>
-                <img src="images/뉴여성존.png" style="width:100%; border-radius:10px;">
-            </div>
-
-            <div id="page-20" class="page shimmer">
-                <div class="intro-content">
-                    <h2>📋 싱글타워 완벽 이용법 (Step-by-Step)</h2>
-                    <div class="step-item">
-                        <span class="step-title">1단계: 모델하우스 투어 및 입주 신청</span>
-                        앱 메인 화면의 '모델하우스' 블록을 클릭하세요.
-                    </div>
-                    <div class="step-item">
-                        <span class="step-title">2단계: 나만의 'My Zone' 꾸미기</span>
-                        입주가 완료되면 각 타워 내부에 배정된 'My Zone'에서 일상을 기록하세요.
-                    </div>
-                </div>
-            </div>
-        </main>
-
-        <footer class="header-bottom" id="header-bottom">
+        <footer class="header-bottom" id="header-bottom" style="display: none;">
             <div class="nav-item" onclick="changePage(20)"><div class="nav-icon">📜</div>싱글백서</div>
             <div class="nav-item"><div class="nav-icon">✒️</div>마이글</div>
             <div class="nav-item"><div class="nav-icon">💬</div>채팅</div>
@@ -249,33 +244,46 @@
 
         const bandTowerData = [
             { id: 1, text: "", img: "밴드.png", link: "sms:01084431979" },
-            { id: 2, text: "", img: "밴드.png", link: "sms:01084431979" },
-            { id: 3, text: "", img: "밴드.png", link: "sms:01084431979" },
-            { id: 4, text: "", img: "밴드.png", link: "sms:01084431979" },
-            { id: 5, text: "", img: "밴드.png", link: "sms:01084431979" },
-            { id: 6, text: "", img: "밴드.png", link: "sms:01084431979" },
             { id: 7, text: "수원이맛있다", img: "밴드7.png", link: "https://band.us/@sumat2025" },
-            { id: 8, text: "쎄라클", img: "밴드8.png", link: "https://band.us/@lsy1434" },
-            { id: 9, text: "", img: "", link: "" },
-            { id: 10, text: "", img: "", link: "" },
-            { id: 11, text: "", img: "", link: "" },
-            { id: 12, text: "", img: "", link: "" }
+            { id: 8, text: "쎄라클", img: "밴드8.png", link: "https://band.us/@lsy1434" }
         ];
 
         let isAdmin = false;
+        let block5ClickCount = 0;
+
+        function handleLogin() {
+            const id = document.getElementById('login-id').value;
+            const pw = document.getElementById('login-pw').value;
+
+            if(id === "Developer" && pw === "0007") {
+                changePage(1);
+            } else {
+                alert("아이디 또는 비밀번호가 올바르지 않습니다.");
+            }
+        }
 
         function initGrid() {
             const grid = document.getElementById('grid-main');
             grid.innerHTML = '';
             blocksData.forEach(data => {
                 const b = createBlockElement(data, `images/block${data.id}.png`);
+                // block5에 대한 클릭 카운트 로직
+                if(data.id === 5) {
+                    b.onclick = () => {
+                        block5ClickCount++;
+                        if(block5ClickCount >= 7) {
+                            enableEditMode();
+                        }
+                    };
+                }
                 grid.appendChild(b);
             });
 
             const bandGrid = document.getElementById('grid-band-tower');
             bandGrid.innerHTML = '';
-            bandTowerData.forEach(data => {
-                // 이미지가 있는 경우에만 경로를 생성
+            // 밴드 데이터 생성 로직 (1번은 합쳐진 용도)
+            [1,2,3,4,5,6,7,8,9,10,11,12].forEach(num => {
+                const data = bandTowerData.find(d => d.id === num) || { id: num, text: "", img: "", link: "" };
                 const imgSrc = data.img ? `images/${data.img}` : "";
                 const b = createBlockElement(data, imgSrc);
                 bandGrid.appendChild(b);
@@ -300,13 +308,14 @@
 
             if (!data.text && !isAdmin) { label.style.display = 'none'; }
 
-            b.onclick = () => {
+            b.addEventListener('click', () => {
+                if (data.id === 5) return; // block5는 카운트 전용
                 if (!data.link) return;
                 if (typeof data.link === 'number') changePage(data.link);
                 else if (data.link.startsWith('http') || data.link.startsWith('sms:')) {
                     window.location.href = data.link;
                 }
-            };
+            });
             return b;
         }
 
@@ -316,13 +325,51 @@
             if (target) target.classList.add('active');
 
             const bottomNav = document.getElementById('header-bottom');
+            const mainHeader = document.getElementById('main-header');
             const homeBtn = document.getElementById('btn-home');
             
-            bottomNav.style.display = (pageNum === 1) ? 'flex' : 'none';
-            homeBtn.style.display = (pageNum === 1) ? 'none' : 'block';
+            // 0페이지(로그인)에서는 헤더와 푸터를 숨김
+            if (pageNum === 0) {
+                bottomNav.style.display = 'none';
+                mainHeader.style.display = 'none';
+            } else {
+                bottomNav.style.display = (pageNum === 1) ? 'flex' : 'none';
+                mainHeader.style.display = 'block';
+                homeBtn.style.display = (pageNum === 1) ? 'none' : 'block';
+            }
             
             document.getElementById('content-area').scrollTop = 0;
         }
+
+        function enableEditMode() {
+            isAdmin = true;
+            alert("편집 모드가 활성화되었습니다. 이제 텍스트와 이미지를 수정할 수 있습니다.");
+            
+            // 모든 텍스트에 contentEditable 적용
+            document.querySelectorAll('.block-text').forEach(el => {
+                el.style.display = 'block';
+                el.contentEditable = true;
+                el.style.border = "1px dashed #fff";
+            });
+            
+            // 이미지 클릭 시 소스 수정 가능하도록
+            document.querySelectorAll('.block-img').forEach(el => {
+                el.onclick = (e) => {
+                    if(!isAdmin) return;
+                    const newSrc = prompt("새 이미지 경로를 입력하세요:", el.src);
+                    if(newSrc) el.src = newSrc;
+                    e.stopPropagation();
+                };
+            });
+        }
+
+        function toggleAdmin() {
+            isAdmin = !isAdmin;
+            // 팝업 문구 삭제: 바로 그리드 갱신만 수행
+            initGrid();
+        }
+
+        function goToHome() { changePage(1); }
 
         function openMyZoneAnimation(targetPageNum) {
             const overlay = document.getElementById('door-overlay');
@@ -336,14 +383,6 @@
                 overlay.classList.remove('show');
                 overlay.classList.remove('open');
             }, 1000);
-        }
-
-        function goToHome() { changePage(1); }
-
-        function toggleAdmin() {
-            isAdmin = !isAdmin;
-            alert(isAdmin ? "관리자 모드 활성화" : "일반 모드 활성화");
-            initGrid();
         }
 
         window.onload = () => {
