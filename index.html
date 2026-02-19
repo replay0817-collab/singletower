@@ -125,6 +125,9 @@
         .intro-content h2 { color: var(--ivory); margin-bottom: 15px; font-size: 18px; border-bottom: 1px solid #444; padding-bottom: 5px; }
         .step-item { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; margin-bottom: 15px; }
         .step-title { color: var(--blue); font-weight: bold; display: block; margin-bottom: 5px; }
+
+        /* 가격 표시 스타일 */
+        .template-price { color: #FFD700; font-weight: bold; margin-left: 5px; font-size: 0.9em; }
     </style>
 </head>
 
@@ -199,17 +202,17 @@
             <div id="page-10" class="page shimmer page-fade">
                 <img src="images/모델하우스.png" style="width:100%; border-radius:10px;">
                 <div class="btn-container">
-                    <button class="btn-action btn-full">남성타워 입주신청</button>
-                    <button class="btn-action btn-full">여성타워 입주신청</button>
+                    <button class="btn-action btn-full">스킨 사러가기</button>
+                    <button class="btn-action btn-full">BGM 사러가기</button>
                     <button class="btn-action btn-full" onclick="changePage(11)">✨ 템플릿 미리보기</button>
                 </div>
             </div>
 
             <div id="page-11" class="page shimmer">
-                <p style="color:white; text-align:center; margin-bottom:10px;">남성 ZONE</p>
-                <img src="images/남성존.png" style="width:100%; border-radius:10px; margin-bottom:20px;">
-                <p style="color:white; text-align:center; margin-bottom:10px;">여성 ZONE</p>
-                <img src="images/여성존.png" style="width:100%; border-radius:10px;">
+                <p style="color:white; text-align:center; margin-bottom:10px;">남성 ZONE <span class="template-price">3,900원</span></p>
+                <img src="images/뉴남성존.png" style="width:100%; border-radius:10px; margin-bottom:20px;">
+                <p style="color:white; text-align:center; margin-bottom:10px;">여성 ZONE <span class="template-price">3,900원</span></p>
+                <img src="images/뉴여성존.png" style="width:100%; border-radius:10px;">
             </div>
 
             <div id="page-20" class="page shimmer">
