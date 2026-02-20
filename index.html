@@ -50,19 +50,17 @@
             overflow: hidden;
         }
 
-        /* --- 인트로 애니메이션 수정 섹션 --- */
+        /* --- 인트로 애니메이션 섹션 --- */
         #intro-screen {
             position: absolute; inset: 0; z-index: 10000;
             background: var(--bg-deep-grey);
             display: flex; justify-content: center; align-items: center;
             overflow: hidden;
         }
-        /* 배경 이미지 그대로 유지 */
         #intro-screen .intro-bg { 
             position: absolute; width: 100%; height: 100%; object-fit: cover; 
             z-index: 1;
         }
-        /* 글자 애니메이션 컨테이너 */
         .intro-text-container {
             position: relative; z-index: 2;
             display: flex; gap: 15px;
@@ -72,7 +70,6 @@
             text-shadow: 2px 4px 10px rgba(0,0,0,0.5);
             opacity: 0; transform: translateY(30px);
         }
-        /* 귀엽게 튀어오르는 애니메이션 */
         @keyframes bounceIn {
             0% { opacity: 0; transform: translateY(30px) scale(0.5); }
             60% { opacity: 1; transform: translateY(-10px) scale(1.1); }
@@ -81,13 +78,11 @@
         .intro-word.ani-1 { animation: bounceIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; animation-delay: 0.3s; }
         .intro-word.ani-2 { animation: bounceIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; animation-delay: 0.8s; }
 
-        /* 전체 인트로 페이드 아웃 */
         @keyframes introFadeOut {
             0% { opacity: 1; }
             100% { opacity: 0; visibility: hidden; }
         }
         #intro-screen.hide { animation: introFadeOut 0.6s forwards; }
-        /* ---------------------------------- */
 
         #door-overlay {
             position: absolute; inset: 0; z-index: 9500; display: none; pointer-events: none;
@@ -124,14 +119,17 @@
 
         .grid-main { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         
-        /* 밴드타워 전용 그리드 스타일 (1~6번 합치기) */
         #grid-band-tower .block:nth-child(1) { grid-column: span 3; }
         #grid-band-tower .block:nth-child(1) .block-img { aspect-ratio: 3/2; } 
         #grid-band-tower .block:nth-child(n+2):nth-child(-n+6) { display: none; } 
 
-        .block { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: transform 0.1s; border: none; }
+        .block { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: transform 0.1s; border: none; position: relative; }
         .block:active { transform: scale(0.9) translateY(3px); }
-        .block-img { width: 100%; aspect-ratio: 1/1; background-color: var(--bg-deep-grey); object-fit: cover; display: block; border-radius: 8px; }
+        .block-img { 
+            width: 100%; aspect-ratio: 1/1; background-color: var(--bg-deep-grey); 
+            object-fit: cover; display: block; border-radius: 8px; 
+        }
+
         .block-text { color: var(--white); font-size: 11px; margin-top: 5px; height: 15px; text-align: center; white-space: nowrap; overflow: hidden; }
 
         .btn-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
@@ -142,7 +140,16 @@
         }
         .btn-action:active { transform: translateY(2px); box-shadow: 0 1px #ccc; }
         
-        /* [수정] 스킨 사러가기 버튼 전용 입체적 동작 스타일 */
+        .btn-pay-3d {
+            transition: all 0.1s ease;
+            box-shadow: 0 4px 0 #b8860b !important;
+            perspective: 500px;
+        }
+        .btn-pay-3d:active {
+            transform: translateY(3px) rotateX(10deg);
+            box-shadow: 0 1px 0 #b8860b !important;
+        }
+
         .btn-3d-action {
             perspective: 500px;
             transform-style: preserve-3d;
@@ -166,7 +173,6 @@
         .step-title { color: var(--blue); font-weight: bold; display: block; margin-bottom: 5px; }
         .template-price { color: #FFD700; font-weight: bold; margin-left: 5px; font-size: 0.9em; }
 
-        /* 추가된 스킨 상점 스타일 */
         .shop-item { display: flex; align-items: center; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 10px; margin-bottom: 15px; gap: 15px; }
         .shop-img { width: 80px; height: 80px; object-fit: cover; border-radius: 5px; }
         .shop-info { flex: 1; display: flex; flex-direction: column; gap: 8px; }
@@ -259,9 +265,9 @@
             </div>
 
             <div id="page-11" class="page shimmer">
-                <p style="color:white; text-align:center; margin-bottom:10px;">블루미드나잇 스킨 <span class="template-price"></span></p>
+                <p style="color:white; text-align:center; margin-bottom:10px;">블루미드나잇 스킨 <span class="template-price">3,700원(VAT 별도)</span></p>
                 <img src="images/뉴남성존.png" style="width:100%; border-radius:10px; margin-bottom:20px;">
-                <p style="color:white; text-align:center; margin-bottom:10px;">핑크포레스트 스킨 <span class="template-price"></span></p>
+                <p style="color:white; text-align:center; margin-bottom:10px;">핑크포레스트 스킨 <span class="template-price">3,700원(VAT 별도)</span></p>
                 <img src="images/뉴여성존.png" style="width:100%; border-radius:10px;">
             </div>
 
@@ -269,15 +275,15 @@
                 <div class="shop-item">
                     <img src="images/뉴남성존.png" class="shop-img">
                     <div class="shop-info">
-                        <span class="shop-name">블루미드나잇 스킨  3,700원(VAT 포함)</span>
-                        <button class="btn-pay">결제하기</button>
+                        <span class="shop-name">블루미드나잇 스킨</span>
+                        <button class="btn-pay btn-pay-3d">결제하기</button>
                     </div>
                 </div>
                 <div class="shop-item">
                     <img src="images/뉴여성존.png" class="shop-img">
                     <div class="shop-info">
-                        <span class="shop-name">핑크포레스트 스킨  3,700원(VAT 포함)</span>
-                        <button class="btn-pay">결제하기</button>
+                        <span class="shop-name">핑크포레스트 스킨</span>
+                        <button class="btn-pay btn-pay-3d">결제하기</button>
                     </div>
                 </div>
             </div>
@@ -301,7 +307,7 @@
             <div class="nav-item" onclick="changePage(20)"><div class="nav-icon">📜</div>싱글백서</div>
             <div class="nav-item"><div class="nav-icon">✒️</div>마이글</div>
             <div class="nav-item"><div class="nav-icon">💬</div>채팅</div>
-            <div class="nav-item" onclick="toggleAdmin()"><div class="nav-icon">⚙️</div>설정</div>
+            <div class="nav-item"><div class="nav-icon">⚙️</div>설정</div>
         </footer>
     </div>
 
@@ -375,8 +381,10 @@
 
             b.onclick = () => {
                 if (!data.link) return;
-                if (typeof data.link === 'number') changePage(data.link);
-                else if (data.link.startsWith('http') || data.link.startsWith('sms:')) {
+                
+                if (typeof data.link === 'number') {
+                    changePage(data.link);
+                } else if (data.link.startsWith('http') || data.link.startsWith('sms:')) {
                     window.location.href = data.link;
                 }
             };
@@ -412,12 +420,6 @@
         }
 
         function goToHome() { changePage(1); }
-
-        function toggleAdmin() {
-            isAdmin = !isAdmin;
-            alert(isAdmin ? "관리자 모드 활성화" : "일반 모드 활성화");
-            initGrid();
-        }
 
         window.onload = () => {
             initGrid();
