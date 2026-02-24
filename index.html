@@ -11,26 +11,19 @@
             --white: #FFFFFF;
             --black: #000000;
             --blue: #0000FF;
+            --gold: #FFD700;
+            --header-height: 40px;
+            --footer-height: 45px; /* 하단 푸터 높이 축소 */
         }
 
-        /* [보안 설정] 모든 요소에 대해 선택 및 복사 방지 */
         * { 
             box-sizing: border-box; margin: 0; padding: 0; 
             -webkit-tap-highlight-color: transparent; 
-            user-select: none; 
-            -webkit-user-select: none; 
-            -moz-user-select: none; 
-            -ms-user-select: none;
+            user-select: none; -webkit-user-select: none; 
+            -moz-user-select: none; -ms-user-select: none;
         }
         
-        img {
-            -webkit-user-drag: none;
-            -khtml-user-drag: none;
-            -moz-user-drag: none;
-            -o-user-drag: none;
-            user-drag: none;
-            pointer-events: auto;
-        }
+        img { -webkit-user-drag: none; pointer-events: auto; }
 
         body, html { 
             width: 100%; height: 100%; background-color: #000; 
@@ -38,37 +31,22 @@
         }
 
         #app-frame {
-            position: relative;
-            width: 100vw;
-            height: 177.77vw;
-            max-height: 100vh;
-            max-width: 56.25vh;
-            margin: 0 auto;
-            background-color: var(--bg-deep-grey);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+            position: relative; width: 100vw; height: 177.77vw;
+            max-height: 100vh; max-width: 56.25vh;
+            margin: 0 auto; background-color: var(--bg-deep-grey);
+            display: flex; flex-direction: column; overflow: hidden;
         }
 
-        /* --- 인트로 애니메이션 섹션 --- */
+        /* Intro Section */
         #intro-screen {
             position: absolute; inset: 0; z-index: 10000;
-            background: var(--bg-deep-grey);
-            display: flex; justify-content: center; align-items: center;
-            overflow: hidden;
+            background: var(--bg-deep-grey); display: flex; justify-content: center; align-items: center;
         }
-        #intro-screen .intro-bg { 
-            position: absolute; width: 100%; height: 100%; object-fit: cover; 
-            z-index: 1;
-        }
-        .intro-text-container {
-            position: relative; z-index: 2;
-            display: flex; gap: 15px;
-        }
+        #intro-screen .intro-bg { position: absolute; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+        .intro-text-container { position: relative; z-index: 2; display: flex; gap: 15px; }
         .intro-word {
             font-size: 42px; font-weight: 900; color: var(--white);
-            text-shadow: 2px 4px 10px rgba(0,0,0,0.5);
-            opacity: 0; transform: translateY(30px);
+            text-shadow: 2px 4px 10px rgba(0,0,0,0.5); opacity: 0;
         }
         @keyframes bounceIn {
             0% { opacity: 0; transform: translateY(30px) scale(0.5); }
@@ -77,107 +55,88 @@
         }
         .intro-word.ani-1 { animation: bounceIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; animation-delay: 0.3s; }
         .intro-word.ani-2 { animation: bounceIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; animation-delay: 0.8s; }
-
-        @keyframes introFadeOut {
-            0% { opacity: 1; }
-            100% { opacity: 0; visibility: hidden; }
-        }
         #intro-screen.hide { animation: introFadeOut 0.6s forwards; }
+        @keyframes introFadeOut { 0% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
 
-        #door-overlay {
-            position: absolute; inset: 0; z-index: 9500; display: none; pointer-events: none;
-        }
-        .door { 
-            position: absolute; top: 0; width: 50%; height: 100%; 
-            background: #1a1a1a; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
-        }
-        .door-left { left: 0; transform: translateX(0); border-right: 1px solid #333; }
-        .door-right { right: 0; transform: translateX(0); border-left: 1px solid #333; }
+        /* Door Transition */
+        #door-overlay { position: absolute; inset: 0; z-index: 9500; display: none; pointer-events: none; }
+        .door { position: absolute; top: 0; width: 50%; height: 100%; background: #1a1a1a; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .door-left { left: 0; border-right: 1px solid #333; }
+        .door-right { right: 0; border-left: 1px solid #333; }
         #door-overlay.open .door-left { transform: translateX(-100%); }
         #door-overlay.open .door-right { transform: translateX(100%); }
         #door-overlay.show { display: block; }
 
-        .header-top { padding: 10px 0; text-align: center; position: relative; background: var(--bg-deep-grey); flex-shrink: 0; }
+        /* Header */
+        .header-top { 
+            height: var(--header-height);
+            display: flex; align-items: center; justify-content: center;
+            position: relative; background: var(--bg-deep-grey); flex-shrink: 0; 
+            z-index: 9000;
+        }
         .logo {
-            font-size: 24px; font-weight: 800; display: inline-block;
+            font-size: 18px; font-weight: 800; display: inline-block;
             background: linear-gradient(90deg, var(--blue), var(--black), var(--blue));
             background-size: 200% auto; color: transparent; -webkit-background-clip: text;
             animation: logoFlow 3s linear infinite;
         }
         @keyframes logoFlow { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
-        .btn-home { position: absolute; left: 15px; top: 10px; color: var(--white); font-size: 20px; cursor: pointer; display: none; z-index: 10; }
+        
+        .nav-controls { position: absolute; left: 8px; display: flex; gap: 4px; align-items: center; }
+        .nav-btn { 
+            width: 32px; height: 32px; 
+            display: none; align-items: center; justify-content: center;
+            color: var(--white); cursor: pointer; z-index: 10;
+        }
 
+        /* Content Area */
         #content-area { flex: 1; overflow-y: auto; position: relative; scrollbar-width: none; }
         #content-area::-webkit-scrollbar { display: none; }
-
-        .page { display: none; width: 100%; padding: 15px; }
+        .page { display: none; width: 100%; padding: 12px; }
         .page.active { display: block; }
-        .shimmer:not(#page-1).active { animation: shimmerEffect 2s infinite ease-in-out; }
+
+        /* Grid */
+        .grid-main { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        #grid-band-tower .block:nth-child(1) { grid-column: span 3; }
+        #grid-band-tower .block:nth-child(1) .block-img { aspect-ratio: 3/2; } 
+        .block { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: transform 0.1s; border: none; }
+        .block:active { transform: scale(0.92); }
+        .block-img { width: 100%; aspect-ratio: 1/1; background-color: var(--bg-deep-grey); object-fit: cover; border-radius: 8px; }
+        .block-text { color: var(--white); font-size: 11px; margin-top: 5px; text-align: center; white-space: nowrap; overflow: hidden; }
+
+        /* Buttons */
+        .btn-container { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; }
+        .btn-action { 
+            background: var(--ivory); border: none; padding: 12px 5px; border-radius: 8px; 
+            font-weight: bold; font-size: 12px; box-shadow: 0 3px #ccc; cursor: pointer;
+            transition: all 0.1s ease;
+        }
+        .btn-action:active { transform: translateY(2px); box-shadow: 0 1px #ccc; }
+        .btn-full { grid-column: span 2; }
+
+        /* Shop Item */
+        .shop-item { display: flex; align-items: center; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 12px; margin-bottom: 10px; gap: 10px; }
+        .shop-img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; }
+        .shop-info { flex: 1; display: flex; flex-direction: column; }
+        .shop-name { color: var(--white); font-weight: bold; font-size: 13px; margin-bottom: 4px; }
+        .btn-pay-wrapper { display: flex; align-items: center; gap: 8px; }
+        .pay-price { color: var(--gold); font-weight: 800; font-size: 13px; }
+        .btn-pay { background: var(--blue); color: #fff; border: none; padding: 4px 10px; border-radius: 15px; font-size: 11px; cursor: pointer; }
+
+        /* Footer Nav (높이 줄임) */
+        .header-bottom { height: var(--footer-height); background: var(--ivory); display: flex; justify-content: space-around; align-items: center; flex-shrink: 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); }
+        .nav-item { 
+            display: flex; flex-direction: column; align-items: center; font-size: 9px; color: #333; cursor: pointer; 
+            width: 25%; height: 100%; justify-content: center;
+        }
+        .nav-item:active { transform: scale(0.9); color: var(--blue); }
+        .nav-icon { font-size: 18px; margin-bottom: 1px; }
+
+        /* Animation Helpers */
+        .shimmer.active { animation: shimmerEffect 2s infinite ease-in-out; }
         @keyframes shimmerEffect { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.15); } }
         .page-fade.active { animation: darkToLight 1.2s ease-out; }
         @keyframes darkToLight { 0% { filter: brightness(0); } 100% { filter: brightness(1); } }
-
-        .grid-main { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        
-        #grid-band-tower .block:nth-child(1) { grid-column: span 3; }
-        #grid-band-tower .block:nth-child(1) .block-img { aspect-ratio: 3/2; } 
-        #grid-band-tower .block:nth-child(n+2):nth-child(-n+6) { display: none; } 
-
-        .block { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: transform 0.1s; border: none; position: relative; }
-        .block:active { transform: scale(0.9) translateY(3px); }
-        .block-img { 
-            width: 100%; aspect-ratio: 1/1; background-color: var(--bg-deep-grey); 
-            object-fit: cover; display: block; border-radius: 8px; 
-        }
-
-        .block-text { color: var(--white); font-size: 11px; margin-top: 5px; height: 15px; text-align: center; white-space: nowrap; overflow: hidden; }
-
-        .btn-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .btn-action { 
-            background: var(--ivory); border: none; padding: 15px 5px; border-radius: 8px; 
-            font-weight: bold; font-size: 13px; box-shadow: 0 4px #ccc; cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .btn-action:active { transform: translateY(2px); box-shadow: 0 1px #ccc; }
-        
-        .btn-pay-3d {
-            transition: all 0.1s ease;
-            box-shadow: 0 4px 0 #b8860b !important;
-            perspective: 500px;
-        }
-        .btn-pay-3d:active {
-            transform: translateY(3px) rotateX(10deg);
-            box-shadow: 0 1px 0 #b8860b !important;
-        }
-
-        .btn-3d-action {
-            perspective: 500px;
-            transform-style: preserve-3d;
-        }
-        .btn-3d-action:active {
-            transform: perspective(500px) rotateX(15deg) translateY(4px) scale(0.95);
-            box-shadow: 0 2px #aaa, 0 10px 20px rgba(0,0,0,0.3);
-            background: #eee;
-        }
-
-        .btn-full { grid-column: span 2; }
-
-        .header-bottom { height: 50px; background: var(--ivory); display: flex; justify-content: space-around; align-items: center; flex-shrink: 0; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; font-size: 10px; color: #333; cursor: pointer; transition: transform 0.1s; }
-        .nav-item:active { transform: scale(0.9) translateY(2px); }
-        .nav-icon { font-size: 18px; margin-bottom: 2px; }
-
-        .intro-content { color: var(--white); line-height: 1.6; }
-        .intro-content h2 { color: var(--ivory); margin-bottom: 15px; font-size: 18px; border-bottom: 1px solid #444; padding-bottom: 5px; }
-        .step-item { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; margin-bottom: 15px; }
-        .step-title { color: var(--blue); font-weight: bold; display: block; margin-bottom: 5px; }
-        .template-price { color: #FFD700; font-weight: bold; margin-left: 5px; font-size: 0.9em; }
-
-        .shop-item { display: flex; align-items: center; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 10px; margin-bottom: 15px; gap: 15px; }
-        .shop-img { width: 80px; height: 80px; object-fit: cover; border-radius: 5px; }
-        .shop-info { flex: 1; display: flex; flex-direction: column; gap: 8px; }
-        .shop-name { color: var(--white); font-weight: bold; font-size: 14px; }
-        .btn-pay { background: #FFD700; border: none; padding: 8px; border-radius: 5px; font-weight: bold; font-size: 12px; cursor: pointer; }
     </style>
 </head>
 
@@ -198,7 +157,10 @@
         </div>
 
         <header class="header-top">
-            <div class="btn-home" id="btn-home" onclick="goToHome()">🏠</div>
+            <div class="nav-controls">
+                <div class="nav-btn" id="btn-back" onclick="goBack()" style="display:none; font-size:18px;">🔙</div>
+                <div class="nav-btn" id="btn-home" onclick="goToHome()" style="display:none; font-size:18px;">🏠</div>
+            </div>
             <div class="logo">Single Tower</div>
         </header>
 
@@ -217,61 +179,37 @@
                     <button class="btn-action btn-full" onclick="openMyZoneAnimation(4)">🏠 My Zone</button>
                     <button class="btn-action">👀 이웃 둘러보기</button>
                     <button class="btn-action">📝 입주인사</button>
-                    <button class="btn-action btn-full">📒 입주자 게시판</button>
+                    <button class="btn-action btn-full">📒 입주자 이모저모</button>
                 </div>
             </div>
-
             <div id="page-3" class="page shimmer page-fade">
                 <img src="images/복도.png" style="width:100%; border-radius:10px;">
                 <div class="btn-container">
                     <button class="btn-action btn-full" onclick="openMyZoneAnimation(5)">🏠 My Zone</button>
                     <button class="btn-action">👀 이웃 둘러보기</button>
                     <button class="btn-action">📝 입주인사</button>
-                    <button class="btn-action btn-full">📒 입주자 게시판</button>
+                    <button class="btn-action btn-full">📒 입주자 이모저모</button>
                 </div>
             </div>
 
-            <div id="page-4" class="page shimmer">
-                <img src="images/남성존.png" style="width:100%; border-radius:10px;">
-                <div class="btn-container">
-                    <button class="btn-action">👤 프로필</button>
-                    <button class="btn-action">📸 사진첩</button>
-                    <button class="btn-action">📖 방명록</button>
-                    <button class="btn-action">📒 다이어리</button>
-                    <button class="btn-action">📩 쪽지함</button>
-                    <button class="btn-action">🎁 내 아이템</button>
-                </div>
-            </div>
-
-            <div id="page-5" class="page shimmer">
-                <img src="images/여성존.png" style="width:100%; border-radius:10px;">
-                <div class="btn-container">
-                    <button class="btn-action">👤 프로필</button>
-                    <button class="btn-action">📸 사진첩</button>
-                    <button class="btn-action">📖 방명록</button>
-                    <button class="btn-action">📒 다이어리</button>
-                    <button class="btn-action">📩 쪽지함</button>
-                    <button class="btn-action">🎁 내 아이템</button>
-                </div>
-            </div>
+            <div id="page-4" class="page shimmer"><img src="images/남성존.png" style="width:100%; border-radius:10px;"><div class="btn-container"><button class="btn-action">👤 프로필</button><button class="btn-action">📸 사진첩</button><button class="btn-action">📖 방명록</button><button class="btn-action">📒 다이어리</button><button class="btn-action">📩 쪽지함</button><button class="btn-action">🎁 내 아이템</button></div></div>
+            <div id="page-5" class="page shimmer"><img src="images/여성존.png" style="width:100%; border-radius:10px;"><div class="btn-container"><button class="btn-action">👤 프로필</button><button class="btn-action">📸 사진첩</button><button class="btn-action">📖 방명록</button><button class="btn-action">📒 다이어리</button><button class="btn-action">📩 쪽지함</button><button class="btn-action">🎁 내 아이템</button></div></div>
 
             <div id="page-10" class="page shimmer page-fade">
                 <img src="images/모델하우스.png" style="width:100%; border-radius:10px;">
                 <div class="btn-container">
-                    <button class="btn-action btn-full btn-3d-action" onclick="changePage(12)">스킨 사러가기</button>
-                    <button class="btn-action btn-full">BGM 사러가기</button>
+                    <button class="btn-action btn-full" onclick="changePage(12)">🛒 스킨 사러가기</button>
+                    <button class="btn-action btn-full">🎵 BGM 사러가기</button>
                     <button class="btn-action btn-full" onclick="changePage(11)">✨ 템플릿 미리보기</button>
                 </div>
             </div>
-
+            
             <div id="page-11" class="page shimmer">
-                <p style="color:white; text-align:center; margin-bottom:10px;">블루미드나잇 스킨 <span class="template-price">3,700원(VAT 별도)</span></p>
+                <p style="color:white; text-align:center; margin-bottom:10px;">블루미드나잇</p>
                 <img src="images/뉴남성존.png" style="width:100%; border-radius:10px; margin-bottom:20px;">
-                
-                <p style="color:white; text-align:center; margin-bottom:10px;">핑크포레스트 스킨 <span class="template-price">3,700원(VAT 별도)</span></p>
+                <p style="color:white; text-align:center; margin-bottom:10px;">핑크포레스트</p>
                 <img src="images/뉴여성존.png" style="width:100%; border-radius:10px; margin-bottom:20px;">
-
-                <p style="color:white; text-align:center; margin-bottom:10px;">낮잠 자는 메이트 스킨 <span class="template-price">3,700원(VAT 별도)</span></p>
+                <p style="color:white; text-align:center; margin-bottom:10px;">낮잠 자는 메이트</p>
                 <img src="images/캣존.png" style="width:100%; border-radius:10px;">
             </div>
 
@@ -280,165 +218,142 @@
                     <img src="images/뉴남성존.png" class="shop-img">
                     <div class="shop-info">
                         <span class="shop-name">블루미드나잇 스킨</span>
-                        <button class="btn-pay btn-pay-3d">결제하기</button>
+                        <div class="btn-pay-wrapper"><span class="pay-price">3,700원</span><button class="btn-pay">구매</button></div>
                     </div>
                 </div>
                 <div class="shop-item">
                     <img src="images/뉴여성존.png" class="shop-img">
                     <div class="shop-info">
                         <span class="shop-name">핑크포레스트 스킨</span>
-                        <button class="btn-pay btn-pay-3d">결제하기</button>
+                        <div class="btn-pay-wrapper"><span class="pay-price">3,700원</span><button class="btn-pay">구매</button></div>
                     </div>
                 </div>
                 <div class="shop-item">
                     <img src="images/캣존.png" class="shop-img">
                     <div class="shop-info">
                         <span class="shop-name">낮잠 자는 메이트 스킨</span>
-                        <button class="btn-pay btn-pay-3d">결제하기</button>
+                        <div class="btn-pay-wrapper"><span class="pay-price">3,700원</span><button class="btn-pay">구매</button></div>
                     </div>
                 </div>
             </div>
 
             <div id="page-20" class="page shimmer">
-                <div class="intro-content">
-                    <h2>📋 싱글타워 완벽 이용법 (Step-by-Step)</h2>
-                    <div class="step-item">
-                        <span class="step-title">1단계: 모델하우스 투어 및 입주 신청</span>
-                        앱 메인 화면의 '모델하우스' 블록을 클릭하세요.
+                <div style="color:white; line-height:1.6;">
+                    <h2 style="color:var(--ivory); margin-bottom:15px; border-bottom:1px solid #444;">📜 싱글타워 이용 가이드</h2>
+                    <div style="background:rgba(255,255,255,0.05); padding:12px; border-radius:8px; margin-bottom:10px;">
+                        <span style="color:var(--blue); font-weight:bold;">1. 타워 이동</span><br>메인 화면의 타워 이미지를 클릭해 입장하세요.
                     </div>
-                    <div class="step-item">
-                        <span class="step-title">2단계: 나만의 'My Zone' 꾸미기</span>
-                        입주가 완료되면 각 타워 내부에 배정된 'My Zone'에서 일상을 기록하세요.
+                    <div style="background:rgba(255,255,255,0.05); padding:12px; border-radius:8px; margin-bottom:10px;">
+                        <span style="color:var(--blue); font-weight:bold;">2. 마이 존</span><br>프로필, 사진첩, 다이어리를 관리하고 이웃과 소통하세요.
+                    </div>
+                    <div style="background:rgba(255,255,255,0.05); padding:12px; border-radius:8px;">
+                        <span style="color:var(--blue); font-weight:bold;">3. 상점 이용</span><br>모델하우스의 '스킨 사러가기'를 통해 개성 넘치는 공간을 꾸며보세요.
                     </div>
                 </div>
             </div>
         </main>
 
-        <footer class="header-bottom" id="header-bottom">
+        <footer class="header-bottom">
             <div class="nav-item" onclick="changePage(20)"><div class="nav-icon">📜</div>싱글백서</div>
             <div class="nav-item"><div class="nav-icon">✒️</div>마이글</div>
-            <div class="nav-item"><div class="nav-icon">💬</div>채팅</div>
+            <div class="nav-item"><div class="nav-icon">🔔</div>알림</div>
             <div class="nav-item"><div class="nav-icon">⚙️</div>설정</div>
         </footer>
     </div>
 
     <script>
         const blocksData = [
-            { id: 1, text: "남성타워", link: 2 },
-            { id: 2, text: "여성타워", link: 3 },
-            { id: 3, text: "모델하우스", link: 10 },
-            { id: 4, text: "밴드타워", link: 30 },
-            { id: 5, text: "", link: "" },
-            { id: 6, text: "자동차타워", link: "https://autonote.co.kr/" },
-            { id: 7, text: "", link: "" },
-            { id: 8, text: "", link: "" },
-            { id: 9, text: "", link: "" },
-            { id: 10, text: "", link: "" },
-            { id: 11, text: "", link: "" },
-            { id: 12, text: "", link: "" }
+            { id: 1, text: "남성타워", link: 2 }, { id: 2, text: "여성타워", link: 3 },
+            { id: 3, text: "모델하우스", link: 10 }, { id: 4, text: "밴드타워", link: 30 },
+            { id: 5, text: "", link: "" }, { id: 6, text: "자동차타워", link: "https://autonote.co.kr/" },
+            { id: 7, text: "", link: "" }, { id: 8, text: "", link: "" },
+            { id: 9, text: "", link: "" }, { id: 10, text: "", link: "" },
+            { id: 11, text: "", link: "" }, { id: 12, text: "", link: "" }
         ];
 
         const bandTowerData = [
-            { id: 1, text: "", img: "밴드.png", link: "sms:01028377908" },
-            { id: 2, text: "", img: "밴드.png", link: "sms:01028377908" },
-            { id: 3, text: "", img: "밴드.png", link: "sms:01028377908" },
-            { id: 4, text: "", img: "밴드.png", link: "sms:01028377908" },
-            { id: 5, text: "", img: "밴드.png", link: "sms:01028377908" },
-            { id: 6, text: "", img: "밴드.png", link: "sms:01028377908" },
-            { id: 7, text: "수원이맛있다", img: "밴드7.png", link: "https://band.us/@sumat2025" },
-            { id: 8, text: "쎄라클", img: "밴드8.png", link: "https://band.us/@lsy1434" },
-            { id: 9, text: "", img: "", link: "" },
-            { id: 10, text: "", img: "", link: "" },
-            { id: 11, text: "", img: "", link: "" },
-            { id: 12, text: "", img: "", link: "" }
+            { text: "Single Tower", img: "밴드.png", link: "sms:01028377908" },
+            { text: "수원이맛있다", img: "밴드7.png", link: "https://band.us/@sumat2025" },
+            { text: "쎄라클", img: "밴드8.png", link: "https://band.us/@lsy1434" }
         ];
 
-        let isAdmin = false;
+        let pageHistory = [1];
 
         function initGrid() {
             const grid = document.getElementById('grid-main');
             grid.innerHTML = '';
-            blocksData.forEach(data => {
-                const b = createBlockElement(data, `images/block${data.id}.png`);
-                grid.appendChild(b);
-            });
-
+            blocksData.forEach(data => grid.appendChild(createBlockElement(data, `images/block${data.id}.png`)));
             const bandGrid = document.getElementById('grid-band-tower');
             bandGrid.innerHTML = '';
-            bandTowerData.forEach(data => {
-                const imgSrc = data.img ? `images/${data.img}` : "";
-                const b = createBlockElement(data, imgSrc);
-                bandGrid.appendChild(b);
-            });
+            bandTowerData.forEach(data => bandGrid.appendChild(createBlockElement(data, data.img ? `images/${data.img}` : "")));
         }
 
         function createBlockElement(data, imgSrc) {
             const b = document.createElement('div');
             b.className = 'block';
-            
             const img = document.createElement('img');
             img.className = 'block-img';
             img.src = imgSrc;
             img.onerror = () => { img.style.opacity = '0'; };
-
             const label = document.createElement('div');
             label.className = 'block-text';
-            label.innerText = data.text;
-
+            label.innerText = data.text || "";
             b.appendChild(img);
             b.appendChild(label);
-
-            if (!data.text && !isAdmin) { label.style.display = 'none'; }
-
+            if (!data.text) label.style.display = 'none';
             b.onclick = () => {
                 if (!data.link) return;
-                
-                if (typeof data.link === 'number') {
-                    changePage(data.link);
-                } else if (data.link.startsWith('http') || data.link.startsWith('sms:')) {
-                    window.location.href = data.link;
-                }
+                if (typeof data.link === 'number') changePage(data.link);
+                else window.location.href = data.link;
             };
             return b;
         }
 
-        function changePage(pageNum) {
+        function changePage(pageNum, isBack = false) {
+            if (!isBack && pageHistory[pageHistory.length - 1] !== pageNum) {
+                pageHistory.push(pageNum);
+            }
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             const target = document.getElementById(`page-${pageNum}`);
             if (target) target.classList.add('active');
-
-            const bottomNav = document.getElementById('header-bottom');
-            const homeBtn = document.getElementById('btn-home');
             
-            bottomNav.style.display = (pageNum === 1) ? 'flex' : 'none';
-            homeBtn.style.display = (pageNum === 1) ? 'none' : 'block';
-            
+            const isHome = (pageNum === 1);
+            document.getElementById('btn-home').style.display = isHome ? 'none' : 'flex';
+            document.getElementById('btn-back').style.display = isHome ? 'none' : 'flex';
             document.getElementById('content-area').scrollTop = 0;
+        }
+
+        function goBack() {
+            if (pageHistory.length > 1) {
+                pageHistory.pop();
+                changePage(pageHistory[pageHistory.length - 1], true);
+            } else {
+                goToHome();
+            }
+        }
+
+        function goToHome() { 
+            pageHistory = [1];
+            changePage(1); 
         }
 
         function openMyZoneAnimation(targetPageNum) {
             const overlay = document.getElementById('door-overlay');
             overlay.classList.add('show');
-            overlay.classList.remove('open');
             setTimeout(() => {
                 overlay.classList.add('open');
-                setTimeout(() => { changePage(targetPageNum); }, 400);
+                setTimeout(() => changePage(targetPageNum), 400);
             }, 50);
             setTimeout(() => {
-                overlay.classList.remove('show');
-                overlay.classList.remove('open');
+                overlay.classList.remove('show', 'open');
             }, 1000);
         }
-
-        function goToHome() { changePage(1); }
 
         window.onload = () => {
             initGrid();
             setTimeout(() => { 
                 document.getElementById('intro-screen').classList.add('hide'); 
-                setTimeout(() => {
-                    document.getElementById('intro-screen').style.display = 'none';
-                }, 600);
+                setTimeout(() => document.getElementById('intro-screen').style.display = 'none', 600);
             }, 2500);
         };
     </script>
