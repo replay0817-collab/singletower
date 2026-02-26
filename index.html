@@ -146,15 +146,15 @@
         .shop-info { flex: 1; display: flex; flex-direction: column; }
         .shop-name { color: var(--white); font-weight: bold; font-size: 14px; margin-bottom: 4px; }
 
-        /* Footer Nav */
-        .header-bottom { height: 45px; background: var(--ivory); display: flex; justify-content: space-around; align-items: center; flex-shrink: 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); }
+        /* Footer Nav (Modified) */
+        .header-bottom { height: 50px; background: var(--bg-deep-grey); display: flex; justify-content: space-around; align-items: center; flex-shrink: 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.3); }
         .nav-item { 
-            display: flex; flex-direction: column; align-items: center; font-size: 10px; color: #333; cursor: pointer; 
+            display: flex; flex-direction: column; align-items: center; cursor: pointer; 
             transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             width: 25%; height: 100%; justify-content: center;
         }
-        .nav-item:active { transform: scale(0.85) translateY(2px); color: var(--blue); }
-        .nav-icon { font-size: 18px; margin-bottom: 1px; transition: filter 0.1s; }
+        .nav-item:active { transform: scale(0.85) translateY(2px); }
+        .nav-icon { font-size: 26px; transition: filter 0.1s; }
 
         /* Animation Helpers */
         .shimmer.active { animation: shimmerEffect 2s infinite ease-in-out; }
@@ -305,10 +305,10 @@
         </main>
 
         <footer class="header-bottom" id="header-bottom">
-            <div class="nav-item" onclick="changePage(20)"><div class="nav-icon">📜</div>싱글백서</div>
-            <div class="nav-item"><div class="nav-icon">✒️</div>마이글</div>
-            <div class="nav-item"><div class="nav-icon">🔔</div>알림</div>
-            <div class="nav-item"><div class="nav-icon">⚙️</div>설정</div>
+            <div class="nav-item" onclick="changePage(20)"><div class="nav-icon">📜</div></div>
+            <div class="nav-item"><div class="nav-icon">✒️</div></div>
+            <div class="nav-item"><div class="nav-icon">🔔</div></div>
+            <div class="nav-item"><div class="nav-icon">⚙️</div></div>
         </footer>
     </div>
 
@@ -373,7 +373,7 @@
                         
                         setTimeout(() => {
                             zoomLayer.classList.remove('active');
-                            zoomLayer.innerHTML = ''; // 초기화하여 재진입 시 충돌 방지
+                            zoomLayer.innerHTML = ''; 
                         }, 500);
                     }, 1000); 
                 } else {
@@ -390,10 +390,7 @@
             
             const target = document.getElementById(`page-${pageNum}`);
             if (target) {
-                // 즉시 active를 추가하여 재진입 시 응답성 확보
                 target.classList.add('active');
-                
-                // 애니메이션 효과 재트리거
                 void target.offsetWidth; 
             }
             
