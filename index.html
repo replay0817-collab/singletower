@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -435,7 +436,7 @@
                         setTimeout(() => {
                             zoomLayer.classList.remove('active');
                             zoomLayer.innerHTML = ''; 
-                        }, 500);
+                        }, 50);
                     }, 1000); 
                 } else {
                     if (typeof data.link === 'number') changePage(data.link);
@@ -477,7 +478,9 @@
             initGrid();
             setTimeout(() => { 
                 document.getElementById('intro-screen').classList.add('hide'); 
-                setTimeout(() => document.getElementById('intro-screen').style.display = 'none', 600);
+                
+
+(() => document.getElementById('intro-screen').style.display = 'none', 600);
             }, 2500);
         };
     </script>
