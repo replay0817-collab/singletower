@@ -132,7 +132,6 @@
             font-weight: bold; font-size: 11px; cursor: pointer;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: all 0.1s;
         }
-        /* [NEW] 선물 버튼 스타일 */
         .btn-gift {
             background: #fff; border: 1px solid #ffd700; color: #333;
             padding: 5px 10px; border-radius: 20px;
@@ -217,8 +216,29 @@
                 </div>
             </div>
 
-            <div id="page-4" class="page shimmer"><img src="images/남성존.png" style="width:100%; border-radius:10px;"><div class="btn-container"><button class="btn-action">👤 프로필</button><button class="btn-action">📸 사진첩</button><button class="btn-action">📖 방명록</button><button class="btn-action">📒 다이어리</button><button class="btn-action">📩 쪽지함</button><button class="btn-action">🎁 내 아이템</button></div></div>
-            <div id="page-5" class="page shimmer"><img src="images/여성존.png" style="width:100%; border-radius:10px;"><div class="btn-container"><button class="btn-action">👤 프로필</button><button class="btn-action">📸 사진첩</button><button class="btn-action">📖 방명록</button><button class="btn-action">📒 다이어리</button><button class="btn-action">📩 쪽지함</button><button class="btn-action">🎁 내 아이템</button></div></div>
+            <div id="page-4" class="page shimmer">
+                <img src="images/남성존.png" style="width:100%; border-radius:10px;">
+                <div class="btn-container">
+                    <button class="btn-action">👤 프로필</button>
+                    <button class="btn-action">📸 사진첩</button>
+                    <button class="btn-action">📖 방명록</button>
+                    <button class="btn-action">📒 다이어리</button>
+                    <button class="btn-action">📩 쪽지함</button>
+                    <button class="btn-action">🎁 내 아이템</button>
+                </div>
+            </div>
+
+            <div id="page-5" class="page shimmer">
+                <img src="images/여성존.png" style="width:100%; border-radius:10px;">
+                <div class="btn-container">
+                    <button class="btn-action">👤 프로필</button>
+                    <button class="btn-action">📸 사진첩</button>
+                    <button class="btn-action">📖 방명록</button>
+                    <button class="btn-action">📒 다이어리</button>
+                    <button class="btn-action">📩 쪽지함</button>
+                    <button class="btn-action">🎁 내 아이템</button>
+                </div>
+            </div>
             
             <div id="page-10" class="page shimmer page-fade">
                 <img src="images/모델하우스.png" style="width:100%; border-radius:10px;">
@@ -229,7 +249,14 @@
                 </div>
             </div>
 
-            <div id="page-11" class="page shimmer"><p style="color:white; text-align:center; margin-bottom:10px;">블루미드나잇 스킨</p><img src="images/뉴남성존.png" style="width:100%; border-radius:10px; margin-bottom:20px;"><p style="color:white; text-align:center; margin-bottom:10px;">핑크포레스트 스킨</p><img src="images/뉴여성존.png" style="width:100%; border-radius:10px; margin-bottom:20px;"><p style="color:white; text-align:center; margin-bottom:10px;">낮잠 자는 메이트 스킨</p><img src="images/캣존.png" style="width:100%; border-radius:10px;"></div>
+            <div id="page-11" class="page shimmer">
+                <p style="color:white; text-align:center; margin-bottom:10px;">블루미드나잇 스킨</p>
+                <img src="images/뉴남성존.png" style="width:100%; border-radius:10px; margin-bottom:20px;">
+                <p style="color:white; text-align:center; margin-bottom:10px;">핑크포레스트 스킨</p>
+                <img src="images/뉴여성존.png" style="width:100%; border-radius:10px; margin-bottom:20px;">
+                <p style="color:white; text-align:center; margin-bottom:10px;">낮잠 자는 메이트 스킨</p>
+                <img src="images/캣존.png" style="width:100%; border-radius:10px;">
+            </div>
 
             <div id="page-12" class="page shimmer">
                 <div class="shop-item">
@@ -344,7 +371,10 @@
                         if (typeof data.link === 'number') changePage(data.link);
                         else window.location.href = data.link;
                         
-                        setTimeout(() => zoomLayer.classList.remove('active'), 500);
+                        setTimeout(() => {
+                            zoomLayer.classList.remove('active');
+                            zoomLayer.innerHTML = ''; // 초기화하여 재진입 시 충돌 방지
+                        }, 500);
                     }, 1000); 
                 } else {
                     if (typeof data.link === 'number') changePage(data.link);
@@ -355,9 +385,17 @@
         }
 
         function changePage(pageNum) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(p => p.classList.remove('active'));
+            
             const target = document.getElementById(`page-${pageNum}`);
-            if (target) target.classList.add('active');
+            if (target) {
+                // 즉시 active를 추가하여 재진입 시 응답성 확보
+                target.classList.add('active');
+                
+                // 애니메이션 효과 재트리거
+                void target.offsetWidth; 
+            }
             
             document.getElementById('header-bottom').style.display = 'flex'; 
             document.getElementById('btn-home').style.display = (pageNum === 1) ? 'none' : 'block';
