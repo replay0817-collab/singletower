@@ -7,7 +7,7 @@
     <title>싱글타워 앱</title>
     <style>
         :root {
-            --bg-deep-grey: #2C2C2C;
+            --bg-deep-grey: #F5F5DC; /* 메인 바탕화면: 연한 베이지색 */
             --ivory: #F5F5F0;
             --white: #FFFFFF;
             --black: #000000;
@@ -52,7 +52,7 @@
         /* Intro Section */
         #intro-screen {
             position: absolute; inset: 0; z-index: 10000;
-            background: var(--bg-deep-grey); display: flex; justify-content: center; align-items: center;
+            background: #2C2C2C; display: flex; justify-content: center; align-items: center;
         }
         #intro-screen .intro-bg { position: absolute; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
         .intro-text-container { position: relative; z-index: 2; display: flex; gap: 15px; }
@@ -93,7 +93,7 @@
             animation: logoFlow 3s linear infinite;
         }
         @keyframes logoFlow { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
-        .btn-home { position: absolute; left: 15px; color: var(--white); font-size: 20px; cursor: pointer; display: none; z-index: 10; }
+        .btn-home { position: absolute; left: 15px; color: var(--black); font-size: 20px; cursor: pointer; display: none; z-index: 10; }
 
         /* Content Area */
         #content-area { 
@@ -109,10 +109,11 @@
         #grid-band-tower .block:nth-child(1) { grid-column: span 3; }
         #grid-band-tower .block:nth-child(1) .block-img { aspect-ratio: 3/2; } 
         
-        .block { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: transform 0.1s; border: none; }
+        /* 1페이지 블록 이미지 바탕화면 투명 처리 수정 */
+        .block { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: transform 0.1s; border: none; outline: none; box-shadow: none; }
         .block:active { transform: scale(0.92); }
-        .block-img { width: 100%; aspect-ratio: 1/1; background-color: var(--bg-deep-grey); object-fit: cover; border-radius: 8px; }
-        .block-text { color: var(--white); font-size: 11px; margin-top: 5px; text-align: center; white-space: nowrap; overflow: hidden; }
+        .block-img { width: 100%; aspect-ratio: 1/1; background-color: transparent; object-fit: cover; border-radius: 8px; border: none; }
+        .block-text { color: var(--black); font-size: 11px; margin-top: 5px; text-align: center; white-space: nowrap; overflow: hidden; font-weight: 500; }
 
         /* Buttons */
         .btn-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
@@ -126,7 +127,7 @@
 
         /* Payment Button Styles */
         .btn-pay-wrapper { display: flex; align-items: center; gap: 6px; margin-top: 5px; flex-wrap: wrap; }
-        .pay-price { color: var(--gold); font-weight: 800; font-size: 14px; width: 100%; margin-bottom: 2px; }
+        .pay-price { color: #d4af37; font-weight: 800; font-size: 14px; width: 100%; margin-bottom: 2px; }
         .btn-pay { 
             background: linear-gradient(135deg, #ffd700, #ffb900);
             border: none; padding: 6px 10px; border-radius: 20px;
@@ -142,23 +143,21 @@
         .btn-pay:active, .btn-gift:active { transform: scale(0.9); }
 
         /* Shop Item */
-        .shop-item { display: flex; align-items: center; background: rgba(255,255,255,0.1); padding: 12px; border-radius: 12px; margin-bottom: 12px; gap: 12px; }
+        .shop-item { display: flex; align-items: center; background: rgba(0,0,0,0.05); padding: 12px; border-radius: 12px; margin-bottom: 12px; gap: 12px; }
         .shop-img { width: 70px; height: 70px; object-fit: cover; border-radius: 8px; }
         .shop-info { flex: 1; display: flex; flex-direction: column; }
-        .shop-name { color: var(--white); font-weight: bold; font-size: 14px; margin-bottom: 4px; }
+        .shop-name { color: var(--black); font-weight: bold; font-size: 14px; margin-bottom: 4px; }
 
         /* Footer Divider */
         .footer-divider {
-            height: 2px;
+            height: 1px;
             width: 100%;
-            background: linear-gradient(90deg, var(--blue), var(--black), var(--blue));
-            background-size: 200% auto;
-            animation: logoFlow 3s linear infinite;
+            background: #ccc;
         }
 
         .header-bottom { 
             height: 50px; 
-            background: var(--bg-deep-grey); 
+            background: #E0E0E0; /* 하단 고정 헤더: 연회색 */
             display: flex; justify-content: space-around; align-items: center; 
             flex-shrink: 0; 
         }
@@ -172,36 +171,36 @@
         
         .nav-icon { 
             font-size: 20px;
-            color: var(--gold); /* 아이콘 색상을 골드로 변경 */
-            opacity: 1; /* 투명도를 높여 더 선명하게 변경 */
+            color: var(--black);
+            opacity: 1;
             transition: filter 0.1s; 
-            filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.4)); /* 골드 빛 글로우 효과 추가 */
         }
 
-        /* [NEW] Settings Page List Style */
+        /* Settings Page List Style */
         .settings-list { list-style: none; margin-top: 10px; }
         .settings-item { 
-            background: rgba(255,255,255,0.05); 
+            background: rgba(0,0,0,0.05); 
             padding: 18px 15px; 
             margin-bottom: 8px; 
             border-radius: 12px; 
-            color: var(--white); 
+            color: var(--black); 
             display: flex; 
             justify-content: space-between; 
             align-items: center;
             font-size: 15px;
             transition: background 0.2s;
+            font-weight: 500;
         }
-        .settings-item:active { background: rgba(255,255,255,0.15); }
-        .settings-item::after { content: '›'; font-size: 20px; color: var(--gold); }
+        .settings-item:active { background: rgba(0,0,0,0.1); }
+        .settings-item::after { content: '›'; font-size: 20px; color: #666; }
         .settings-item.danger { color: #ff6b6b; }
 
         /* Animation Helpers */
         .shimmer.active { animation: shimmerEffect 2s infinite ease-in-out; }
         .shimmer-img { animation: shimmerEffect 2s infinite ease-in-out; }
-        @keyframes shimmerEffect { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.15); } }
+        @keyframes shimmerEffect { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.05); } }
         .page-fade.active { animation: darkToLight 1.2s ease-out; }
-        @keyframes darkToLight { 0% { filter: brightness(0); } 100% { filter: brightness(1); } }
+        @keyframes darkToLight { 0% { filter: brightness(0.8); } 100% { filter: brightness(1); } }
     </style>
 </head>
 
@@ -263,9 +262,9 @@
                     <button class="btn-action">👤 프로필</button>
                     <button class="btn-action">📸 사진첩</button>
                     <button class="btn-action">📖 방명록</button>
-                    <button class="btn-action">📒 다이어리</button>
+                    <button class="btn-action">📒 일기장</button>
                     <button class="btn-action">📩 쪽지함</button>
-                    <button class="btn-action">💎 내아이템</button>
+                    <button class="btn-action">👣 발자국</button>
                 </div>
             </div>
 
@@ -275,9 +274,9 @@
                     <button class="btn-action">👤 프로필</button>
                     <button class="btn-action">📸 사진첩</button>
                     <button class="btn-action">📖 방명록</button>
-                    <button class="btn-action">📒 다이어리</button>
+                    <button class="btn-action">📒 일기장</button>
                     <button class="btn-action">📩 쪽지함</button>
-                    <button class="btn-action">💎 내아이템</button>
+                    <button class="btn-action">👣 발자국</button>
                 </div>
             </div>
             
@@ -291,11 +290,11 @@
             </div>
 
             <div id="page-11" class="page active">
-                <p style="color:white; text-align:center; margin-bottom:10px;">블루미드나잇 스킨</p>
+                <p style="color:black; text-align:center; margin-bottom:10px; font-weight:bold;">블루미드나잇 스킨</p>
                 <img src="images/뉴남성존.png" class="shimmer-img" style="width:100%; border-radius:10px; margin-bottom:20px;">
-                <p style="color:white; text-align:center; margin-bottom:10px;">핑크포레스트 스킨</p>
+                <p style="color:black; text-align:center; margin-bottom:10px; font-weight:bold;">핑크포레스트 스킨</p>
                 <img src="images/뉴여성존.png" class="shimmer-img" style="width:100%; border-radius:10px; margin-bottom:20px;">
-                <p style="color:white; text-align:center; margin-bottom:10px;">낮잠 자는 메이트 스킨</p>
+                <p style="color:black; text-align:center; margin-bottom:10px; font-weight:bold;">낮잠 자는 메이트 스킨</p>
                 <img src="images/캣존.png" class="shimmer-img" style="width:100%; border-radius:10px;">
             </div>
 
@@ -336,29 +335,29 @@
             </div>
 
             <div id="page-20" class="page active">
-                <div style="color:white; line-height:1.6; padding: 5px;">
-                    <h2 style="color:var(--gold); margin-bottom:20px; text-align:center; font-size:22px; border-bottom:2px solid var(--gold); padding-bottom:10px;">🏢 싱글타워 백서</h2>
-                    <div style="background:rgba(255,255,255,0.08); padding:15px; border-radius:12px; margin-bottom:15px; border-left:4px solid var(--blue);">
+                <div style="color:black; line-height:1.6; padding: 5px;">
+                    <h2 style="color:var(--black); margin-bottom:20px; text-align:center; font-size:22px; border-bottom:2px solid var(--black); padding-bottom:10px;">🏢 싱글타워 백서</h2>
+                    <div style="background:rgba(0,0,0,0.05); padding:15px; border-radius:12px; margin-bottom:15px; border-left:4px solid var(--blue);">
                         <p style="font-weight:bold; color:var(--blue); margin-bottom:5px;">01. 스마트 워프</p>
-                        <p style="font-size:13px; color:#ddd;">메인 화면에서 배정 받은 <span style="color:var(--white); font-weight:bold;">타워(남성타워/여성타워) 블록을 터치</span>하세요. 화려한 줌 인 연출과 함께 해당 구역으로 즉시 이동합니다.</p>
+                        <p style="font-size:13px; color:#333;">메인 화면에서 배정 받은 <span style="color:var(--black); font-weight:bold;">타워(남성타워/여성타워) 블록을 터치</span>하세요. 화려한 줌 인 연출과 함께 해당 구역으로 즉시 이동합니다.</p>
                     </div>
-                    <div style="background:rgba(255,255,255,0.08); padding:15px; border-radius:12px; margin-bottom:15px; border-left:4px solid var(--gold);">
-                        <p style="font-weight:bold; color:var(--gold); margin-bottom:5px;">02. My Zone 꾸미기</p>
-                        <p style="font-size:13px; color:#ddd;">모델하우스에서 다양한 <span style="color:var(--white); font-weight:bold;">스킨과 BGM</span>을 구매하여 나만의 개성 있는 공간을 연출할 수 있습니다.</p>
+                    <div style="background:rgba(0,0,0,0.05); padding:15px; border-radius:12px; margin-bottom:15px; border-left:4px solid #d4af37;">
+                        <p style="font-weight:bold; color:#d4af37; margin-bottom:5px;">02. My Zone 꾸미기</p>
+                        <p style="font-size:13px; color:#333;">모델하우스에서 다양한 <span style="color:var(--black); font-weight:bold;">스킨과 BGM</span>을 구매하여 나만의 개성 있는 공간을 연출할 수 있습니다.</p>
                     </div>
-                    <div style="background:rgba(255,255,255,0.08); padding:15px; border-radius:12px; margin-bottom:15px; border-left:4px solid #ff6b6b;">
+                    <div style="background:rgba(0,0,0,0.05); padding:15px; border-radius:12px; margin-bottom:15px; border-left:4px solid #ff6b6b;">
                         <p style="font-weight:bold; color:#ff6b6b; margin-bottom:5px;">03. 이웃과 소통하기</p>
-                        <p style="font-size:13px; color:#ddd;">복도에서 <span style="color:var(--white); font-weight:bold;">이웃 둘러보기</span>를 통해 다른 입주민의 방을 방문하고 방명록을 남겨보세요.</p>
+                        <p style="font-size:13px; color:#333;">복도에서 <span style="color:var(--black); font-weight:bold;">이웃 둘러보기</span>를 통해 다른 입주민의 방을 방문하고 방명록을 남겨보세요.</p>
                     </div>
-                    <div style="background:rgba(255,255,255,0.08); padding:15px; border-radius:12px; margin-bottom:15px; border-left:4px solid #2ecc71;">
+                    <div style="background:rgba(0,0,0,0.05); padding:15px; border-radius:12px; margin-bottom:15px; border-left:4px solid #2ecc71;">
                         <p style="font-weight:bold; color:#2ecc71; margin-bottom:5px;">04. 밴드타워 즐기기</p>
-                        <p style="font-size:13px; color:#ddd;">밴드타워에 <span style="color:var(--white); font-weight:bold;">내 밴드 배너신청</span>을 하고, 내 취향에 딱 맞는 밴드를 찾아 새로운 모임을 시작해 보세요.</p>
+                        <p style="font-size:13px; color:#333;">밴드타워에 <span style="color:var(--black); font-weight:bold;">내 밴드 배너신청</span>을 하고, 내 취향에 딱 맞는 밴드를 찾아 새로운 모임을 시작해 보세요.</p>
                     </div>
                 </div>
             </div>
 
             <div id="page-50" class="page active">
-                <h2 style="color:var(--white); margin-bottom:20px; text-align:center; font-size:20px;">시스템 설정</h2>
+                <h2 style="color:var(--black); margin-bottom:20px; text-align:center; font-size:20px;">시스템 설정</h2>
                 <ul class="settings-list">
                     <li class="settings-item">내 정보</li>
                     <li class="settings-item">알림설정</li>
@@ -420,6 +419,7 @@
             const img = document.createElement('img');
             img.className = 'block-img';
             img.src = imgSrc;
+            // 이미지가 없거나 투명한 경우 바탕색과 겹치지 않도록 투명 배경 유지
             img.onerror = () => { img.style.opacity = '0'; };
             const label = document.createElement('div');
             label.className = 'block-text';
