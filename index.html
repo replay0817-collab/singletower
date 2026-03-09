@@ -53,13 +53,44 @@
         #intro-screen {
             position: absolute; inset: 0; z-index: 10000;
             background: #2C2C2C; display: flex; justify-content: center; align-items: center;
+            overflow: hidden; /* 비눗방울이 화면 밖으로 나가지 않게 */
         }
         #intro-screen .intro-bg { position: absolute; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
-        .intro-text-container { position: relative; z-index: 2; display: flex; gap: 15px; }
+        .intro-text-container { position: relative; z-index: 5; display: flex; gap: 15px; }
         .intro-word {
             font-size: 42px; font-weight: 900; color: var(--white);
             text-shadow: 2px 4px 10px rgba(0,0,0,0.5); opacity: 0;
         }
+
+        /* 비눗방울 스타일 */
+        .bubble {
+            position: absolute;
+            bottom: -50px;
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            z-index: 3;
+            pointer-events: none;
+            animation: bubbleUp linear infinite;
+        }
+        .bubble::after {
+            content: '';
+            position: absolute;
+            top: 20%;
+            left: 20%;
+            width: 25%;
+            height: 25%;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+        }
+
+        @keyframes bubbleUp {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(-110vh) translateX(50px); opacity: 0; }
+        }
+
         @keyframes bounceIn {
             0% { opacity: 0; transform: translateY(30px) scale(0.5); }
             60% { opacity: 1; transform: translateY(-10px) scale(1.1); }
@@ -211,6 +242,7 @@
 
         <div id="intro-screen">
             <img src="images/인트로.png" class="intro-bg">
+            <div id="bubble-container" style="position:absolute; inset:0; z-index:3;"></div>
             <div class="intro-text-container">
                 <span class="intro-word ani-1">싱글</span>
                 <span class="intro-word ani-2">타워</span>
@@ -398,6 +430,34 @@
             { text: "쎄라클", img: "밴드8.png", link: "https://band.us/@lsy1434" }
         ];
 
+        // 비눗방울 생성 함수
+        function createBubbles() {
+            const container = document.getElementById('bubble-container');
+            if (!container) return;
+            const bubbleCount = 15; // 생성할 비눗방울 수
+
+            for (let i = 0; i < bubbleCount; i++) {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                
+                // 랜덤 크기
+                const size = Math.random() * 40 + 10 + 'px';
+                bubble.style.width = size;
+                bubble.style.height = size;
+                
+                // 랜덤 위치 (가로)
+                bubble.style.left = Math.random() * 100 + '%';
+                
+                // 랜덤 애니메이션 속도 및 지연 시간
+                const duration = Math.random() * 2 + 2 + 's';
+                const delay = Math.random() * 2 + 's';
+                bubble.style.animationDuration = duration;
+                bubble.style.animationDelay = delay;
+                
+                container.appendChild(bubble);
+            }
+        }
+
         function initGrid() {
             const grid = document.getElementById('grid-main');
             if(!grid) return;
@@ -419,7 +479,6 @@
             const img = document.createElement('img');
             img.className = 'block-img';
             img.src = imgSrc;
-            // 이미지가 없거나 투명한 경우 바탕색과 겹치지 않도록 투명 배경 유지
             img.onerror = () => { img.style.opacity = '0'; };
             const label = document.createElement('div');
             label.className = 'block-text';
@@ -482,6 +541,7 @@
         window.onload = () => {
             initGrid();
             changePage(1);
+            createBubbles(); // 인트로 비눗방울 생성 시작
             setTimeout(() => { 
                 document.getElementById('intro-screen').classList.add('hide'); 
                 setTimeout(() => document.getElementById('intro-screen').style.display = 'none', 600);
