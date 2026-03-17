@@ -242,6 +242,10 @@
         @keyframes shimmerEffect { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.2); } }
         .page-fade.active { animation: darkToLight 1.2s ease-out; }
         @keyframes darkToLight { 0% { filter: brightness(0.8); } 100% { filter: brightness(1); } }
+
+        /* 아이콘 색상 변경 스타일 추가 */
+        .icon-male { color: #007bff; }
+        .icon-female { color: #ff69b4; }
     </style>
 </head>
 
@@ -302,7 +306,7 @@
             <div id="page-4" class="page">
                 <img src="images/남성존.png" class="shimmer-img" style="width:100%; border-radius:10px;">
                 <div class="btn-container">
-                    <button class="btn-action">👤 프로필</button>
+                    <button class="btn-action"><span class="icon-male">👔</span> 프로필</button>
                     <button class="btn-action">📸 사진첩</button>
                     <button class="btn-action">📖 방명록</button>
                     <button class="btn-action">📒 일기장</button>
@@ -314,7 +318,7 @@
             <div id="page-5" class="page">
                 <img src="images/여성존.png" class="shimmer-img" style="width:100%; border-radius:10px;">
                 <div class="btn-container">
-                    <button class="btn-action">👤 프로필</button>
+                    <button class="btn-action"><span class="icon-female">👗</span> 프로필</button>
                     <button class="btn-action">📸 사진첩</button>
                     <button class="btn-action">📖 방명록</button>
                     <button class="btn-action">📒 일기장</button>
@@ -377,7 +381,7 @@
                 </div>
             </div>
 
-            <div id="page-20" class="page">
+            <div id="page-20" class="page page-fade">
                 <div style="color:black; line-height:1.6; padding: 5px;">
                     <h2 style="color:var(--black); margin-bottom:20px; text-align:center; font-size:22px; border-bottom:2px solid var(--black); padding-bottom:10px;">🏢 싱글타워 백서</h2>
                     <div style="background:rgba(0,0,0,0.05); padding:15px; border-radius:12px; margin-bottom:15px; border-left:4px solid var(--blue);">
